@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "87027152912",
+    "firebase_url": "https://hastane-3a893-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "hastane-3a893",
+    "storage_bucket": "hastane-3a893.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87027152912:android:c3bed12554ad836037f295",
+        "android_client_info": {
+          "package_name": "com.hastane"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9Z-ppgDeYfsL2nmBSHN8k8yN_wX27GqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
