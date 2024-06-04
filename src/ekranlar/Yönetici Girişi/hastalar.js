@@ -76,7 +76,7 @@ const Hastalar = ({ route, navigation }) => {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#03244f" />
-                <Text>Veriler yükleniyor...</Text>
+                <Text style={{color:'#03244f'}}>Veriler yükleniyor...</Text>
             </View>
         );
     }
@@ -95,7 +95,7 @@ const Hastalar = ({ route, navigation }) => {
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 20, }}>
-            <CustomInput placeholder="Aranan Hasta" onChangeText={setArananHasta} adGirisi containerStyle={{ marginTop: 20 }} />
+            <CustomInput placeholder="Aranan Hasta" onChangeText={setArananHasta} containerStyle={{ marginTop: 20 }} />
 
             <FlatList
                 showsVerticalScrollIndicator={false}

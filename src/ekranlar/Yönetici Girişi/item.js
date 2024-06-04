@@ -9,14 +9,14 @@ const Item = ({ item, menuAcik, doktorSil, navigation }) => {
         return (
             <View style={{ flexDirection: 'row', gap: -1, }}>
                 <View style={{ flexDirection: 'row', }}>
-                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#00be00', paddingHorizontal: 20, }}
+                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#2D567B', paddingHorizontal: 20, }}
                         onPress={() => { ref.current.close(); navigation.navigate('Doktor Düzenleme', { doktorTc: item.tc }); }} >
                         <Text>Doktoru{'\n'}Düzenle</Text>
                     </TouchableOpacity>
                 </View>
 
-                <View style={{ flexDirection: 'row', backgroundColor: '#ff0000' }}>
-                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#ff0000', paddingHorizontal: 20, }}
+                <View style={{ flexDirection: 'row', backgroundColor: '#d60000' }}>
+                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#d60000', paddingHorizontal: 20, }}
                         onPress={() => {
                             ref.current.close();
                             Alert.alert(
@@ -44,18 +44,18 @@ const Item = ({ item, menuAcik, doktorSil, navigation }) => {
     }, [item.acik])
 
     return (
-        <Swipeable ref={ref} containerStyle={{ backgroundColor: '#00be00', borderRadius: 12, }} renderRightActions={kayanButon} onSwipeableOpen={() => { menuAcik(item.tc) }} >
+        <Swipeable ref={ref} containerStyle={{ backgroundColor: '#2D567B', borderRadius: 12, }} renderRightActions={kayanButon} onSwipeableOpen={() => { menuAcik(item.tc) }} >
             <View style={{ backgroundColor: '#fff', borderRadius: 12, flexDirection: 'row', }}>
                 <View style={{ marginLeft: 15, justifyContent: 'center', gap: 10, marginVertical: 10 }}>
-                    <Text style={{ color: '#03244f', width: 220 }}>Doktor Adı Soyadı: {item.ad + ' ' + item.soyad}</Text>
+                    <Text style={{ color: '#03244f', width: 220 }}>{item.ad + ' ' + item.soyad}</Text>
                     <Text style={{ color: '#03244f', fontSize: 12 }}>Polikliniği: {item.poliklinik}</Text>
                     <View style={{ flexDirection: 'row', }}>
                         <Text style={{ color: '#03244f', fontSize: 12 }}>Doğum Tarihi: {item.dogumtarihi} / </Text>
-                        <Text style={{ color: '#03244f', fontSize: 12 }}>Telefon NO: {item.gsm}</Text>
+                        <Text style={{ color: '#03244f', fontSize: 12 }}>Doğum Yeri: {item.dogumyeri}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={{ color: '#03244f', fontSize: 12 }}>Cinsiyeti: {item.cinsiyet} / </Text>
-                        <Text style={{ color: '#03244f', fontSize: 12 }}>Doğum Yeri: {item.dogumyeri}</Text>
+                        <Text style={{ color: '#03244f', fontSize: 12 }}>Telefon No: {item.gsm}</Text>
                     </View>
                 </View>
 

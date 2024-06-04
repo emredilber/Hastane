@@ -89,7 +89,7 @@ const Doktorlar = ({ route, navigation }) => {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#03244f" />
-                <Text>Veriler yükleniyor...</Text>
+                <Text style={{ color: '#03244f' }}>Veriler yükleniyor...</Text>
             </View>
         );
     }

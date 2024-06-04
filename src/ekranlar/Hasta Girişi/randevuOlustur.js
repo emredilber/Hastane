@@ -151,6 +151,7 @@ const RandevuOlustur = ({ route }) => {
                 randevuDurumu: 'Randevu Alındı',
             };
             await firestore().collection('randevular').doc(yeniID.toString()).set(randevu);
+            Alert.alert('Durum','Randevunuz oluşturulmuştur.');
         } catch (error) {
             console.error('Error fetching data: ', error);
         }
@@ -181,7 +182,7 @@ const RandevuOlustur = ({ route }) => {
                     style={{ paddingVertical: 10, borderRadius: 20, backgroundColor: '#03244f', alignItems: 'center' }}
                     onPress={randevuAl}
                 >
-                    <Text style={{ fontSize: 16, color: '#fff', }}>Güncelle</Text>
+                    <Text style={{ fontSize: 16, color: '#fff', }}>Randevu Oluştur</Text>
                 </TouchableOpacity>
             </View>
 

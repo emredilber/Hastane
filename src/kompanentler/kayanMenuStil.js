@@ -6,15 +6,15 @@ const KayanMenuStili = ({ navigation1, navigation, tc, ad }) => {
     const routes = navigation.getState().routes;
     const routeIcons = {
         'Randevular': require('../assets/date.png'),
-        'Hasta Bilgi Güncelleme': require('../assets/calendar.png'),
-        'Randevu Olustur': require('../assets/skills.png'),
+        'Randevu Olustur': require('../assets/calendar.png'),
+        'Bilgi Güncelleme': require('../assets/skills.png'),
         'Doktor Randevuları': require('../assets/medical.png'),
         'Doktor Bilgi Güncelleme': require('../assets/skills.png'),
         'Doktorlar': require('../assets/stethoscope.png'),
         'Doktor Kaydet': require('../assets/kaydet.png'),
-        'Doktor Düzenleme': require('../assets/kaydet.png'),
+        'Doktor Düzenleme': require('../assets/skills.png'),
         'Hastalar': require('../assets/stethoscope.png'),
-        'Hasta Düzenleme': require('../assets/kaydet.png'),
+        'Hasta Düzenleme': require('../assets/skills.png'),
     };
 
     return (
@@ -28,7 +28,7 @@ const KayanMenuStili = ({ navigation1, navigation, tc, ad }) => {
                     {routes.map((route, index) => (
                         <TouchableOpacity
                             key={index}
-                            style={{ marginHorizontal: 10, flexDirection: 'row', alignItems: 'center', padding: 20, }}
+                            style={{ marginHorizontal: 10, flexDirection: 'row', alignItems: 'center', padding: 10,paddingLeft:8 }}
                             onPress={() => navigation.navigate(route.name)}
                         >
                             <Image source={routeIcons[route.name]} style={{ width: 30, height: 30, marginRight: 15 }} />

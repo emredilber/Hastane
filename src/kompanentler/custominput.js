@@ -72,10 +72,10 @@ const CustomInput = ({ containerStyle, placeholder, onChangeText, hata, veri, yu
       } else if (props.soyadGirisi && text.length < 3) {
         setError('Yanlış soyadı girişi!');
       } else if (props.tcGirisi && text.length < 11) {
-        setError('Tc numarasını 11 haneli girmelisiniz!');
+        setError('Tc kimlik numarasını 11 haneli girmelisiniz!');
         { hatavar && hatavar('Tc numarasını 11 haneli girmelisiniz!') }
       } else if (props.gsmGirisi && text.length < 11) {
-        setError('Telefon numarasını 10 haneli girmelisiniz!');
+        setError('Telefon numarasını 11 haneli girmelisiniz!');
       } else if (props.gsmGirisi && !/^(05\d{9})$/.test(text)) {
         setError('Telefon numarası 0 ile başlamalıdır ve doğru girilmelidir!');
       } else if (props.tarihGirisi && !/^([0-9]{2})\.([0-9]{2})\.([0-9]{4})$/.test(text)) {

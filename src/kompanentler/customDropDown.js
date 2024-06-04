@@ -105,7 +105,7 @@ const CustomDropdown = ({ data, onSelect, placeholder, yukleniyor, veri, style, 
                                 flex: 1,
                                 fontSize: 13,
                                 fontWeight: '500',
-                                color: '#151E26',
+                                color: '#03244f',
                             }}>
                                 {selectedItem && selectedItem.title}
                             </Text>

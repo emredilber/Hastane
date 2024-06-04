@@ -11,10 +11,10 @@ const Item = ({ item, menuAcik }) => {
         return (
             <View style={{ flexDirection: 'row', gap: -1, }}>
                 
-                <View style={{ flexDirection: 'row', gap: -1, backgroundColor: '#ff0000' }}>
-                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#ff0000', paddingHorizontal: 20, }}
+                <View style={{ flexDirection: 'row', gap: -1, backgroundColor: '#d60000' }}>
+                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#d60000', paddingHorizontal: 20, }}
                         onPress={() => { ref.current.close(); gelinmediRandevu() }}>
-                        <Text>İptal Et</Text>
+                        <Text style={{color:'#fff'}}>İptal Et</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -62,13 +62,13 @@ const Item = ({ item, menuAcik }) => {
     }, [item.acik])
 
     return (
-        <Swipeable ref={ref} containerStyle={{ backgroundColor: '#ff0000', borderRadius: 12, }} renderRightActions={kayanButon} onSwipeableOpen={() => { menuAcik(item.id) }}>
+        <Swipeable ref={ref} containerStyle={{ backgroundColor: '#d60000', borderRadius: 12, }} renderRightActions={kayanButon} onSwipeableOpen={() => { menuAcik(item.id) }}>
             <View style={{ backgroundColor: '#fff', borderRadius: 12, flexDirection: 'row', }}>
                 <View style={{ padding: 20, backgroundColor: '#03244f' }}>
                     <Icon name='clock' size={48} color='#fff' />
                 </View>
                 <View style={{ marginLeft: 15, justifyContent: 'center', gap: 10 }}>
-                    <Text style={{ color: '#03244f', width:145}}>Doktoru: {item.doktorAdi}</Text>
+                    <Text style={{ color: '#03244f', width:145}}>{item.doktorAdi}</Text>
                     <Text style={{ color: '#03244f', fontSize: 13 }}>{item.poliklinikAdi}</Text>
                     <View style={{ flexDirection: 'row', gap: 20 }}>
                         <Text style={{ color: '#03244f', fontSize: 12 }}>Tarih: {item.randevuTarihi}</Text>

@@ -83,7 +83,7 @@ const DoktorRandevularim = ({ route }) => {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#03244f" />
-                <Text>Veriler yükleniyor...</Text>
+                <Text style={{color:'#03244f'}}>Veriler yükleniyor...</Text>
             </View>
         );
     }
@@ -111,7 +111,7 @@ const DoktorRandevularim = ({ route }) => {
 
             <TouchableOpacity onPress={() => { tarihFiltrele() }} style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Icon2 name={filtrele ? 'checkbox-marked' : 'checkbox-blank-outline'} size={24} color={'#03244f'} />
-                <Text style={{ fontSize: 16, color: '#03244f', marginLeft: 10 }}>Tarhie Göre filtrele</Text>
+                <Text style={{ fontSize: 16, color: '#03244f', marginLeft: 10 }}>Tarihe Göre Filtrele</Text>
             </TouchableOpacity>
             <FlatList
                 showsVerticalScrollIndicator={false}

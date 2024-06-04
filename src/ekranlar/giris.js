@@ -121,9 +121,9 @@ const Giris = ({ navigation }) => {
       <View style={{ height: 40, backgroundColor: '#03244f', zIndex: 999 }} />
 
       <View style={{ marginHorizontal: 20 }}>
-        <View style={{ alignItems: 'center', marginTop: keyboardHeight ? -keyboardHeight / 2 : 40, gap: 20 }}>
+        <View style={{ alignItems: 'center',marginHorizontal:50, marginTop: keyboardHeight ? -keyboardHeight / 2 : 40, gap: 20 }}>
           <Image source={require('../assets/iaü.png')} style={{ height: 150, width: 150 }} />
-          <Text style={{ color: '#03244f', fontWeight: '500', fontSize: 19, textAlign: 'center', lineHeight: 30 }}>İSTANBUL AYDIN ÜNİVERSİTESİ HASTANESİ SİSTEMİ</Text>
+          <Text style={{ color: '#03244f', fontWeight: '500', fontSize: 19, textAlign: 'center', lineHeight: 30 }}>İSTANBUL AYDIN ÜNİVERSİTESİ VM MEDİCAL PARK HASTANESİ</Text>
         </View>
         <View style={{ justifyContent: 'center', marginTop: 80 }}>
 

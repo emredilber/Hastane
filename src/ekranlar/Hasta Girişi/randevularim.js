@@ -10,6 +10,7 @@ const Randevularim = ({ route }) => {
     const { tc } = route.params;
     const [randevular, setRandevular] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [hata, setHata] = useState(false);
 
     const randevularıGetir = async () => {
         try {
@@ -18,6 +19,14 @@ const Randevularim = ({ route }) => {
                 .orderBy('id', 'desc')
                 .where('hastaTC', '==', tc)
                 .get();
+
+            if (querySnapshot.empty) {
+                setHata(true)
+            }
+            else {
+                setHata(false);
+            }
+
 
             const randevularList = await Promise.all(querySnapshot.docs.map(async (documentSnapshot) => {
                 return {
@@ -67,7 +76,7 @@ const Randevularim = ({ route }) => {
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 20, }}>
-            <FlatList
+            {hata === false && <FlatList
                 showsVerticalScrollIndicator={false}
                 data={randevular}
                 keyExtractor={(item) => item.id}
@@ -82,8 +91,12 @@ const Randevularim = ({ route }) => {
                         </View>
                     );
                 }}
-            />
+            />}
 
+            {hata === true && <View style={{alignItems:'center'}}>
+                <Text style={{color:'#03244f',fontSize:16}}>Randevunuz Bulunmamaktadır</Text>
+            </View>
+            }
         </View>
     );
 };

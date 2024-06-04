@@ -24,8 +24,8 @@ const HastaGiris = ({ route, navigation }) => {
 
                 })}>
                 <Drawer.Screen name='Randevular' component={Randevularim} initialParams={{ tc: tc }} options={{ drawerIcon: (() => (<Image source={require('../../assets/date.png')} />)) }} />
-                <Drawer.Screen name='Hasta Bilgi Güncelleme' component={HastaBilgileriGuncelle} initialParams={{ tc: tc }} />
                 <Drawer.Screen name='Randevu Olustur' component={RandevuOlustur} initialParams={{ tc: tc }} />
+                <Drawer.Screen name='Bilgi Güncelleme' component={HastaBilgileriGuncelle} initialParams={{ tc: tc }} />
             </Drawer.Navigator>
         </NavigationContainer>
     );

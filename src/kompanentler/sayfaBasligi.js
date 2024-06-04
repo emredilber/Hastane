@@ -11,7 +11,7 @@ const sayfaBasligi = ({ route, navigation }) => {
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                     <Image source={require('../assets/iaü.png')} style={{ width: 60, height: 60 }} />
                     <View>
-                        <Text style={{ color: '#fff' }}>İSTANBUL AYDIN ÜNİVERSİTESİ HASTANESİ</Text>
+                        <Text style={{ color: '#fff' }}>İSTANBUL AYDIN ÜNİVERSİTESİ{'\n'}VM MEDİCAL PARK HASTANESİ</Text>
                         <Text style={{ color: '#fff', fontSize: 13, marginTop: 10 }}>{route.name}</Text>
                     </View>
                 </View>
@@ -29,6 +29,24 @@ const sayfaBasligi = ({ route, navigation }) => {
                         <Icon name='refresh-circle-outline' color='#fff' size={40} />
                     </TouchableOpacity>}
                     {route.name === 'Hastalar' && <TouchableOpacity onPress={() => navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: route.name }],
+                        })
+                    )
+                    } >
+                        <Icon name='refresh-circle-outline' color='#fff' size={40} />
+                    </TouchableOpacity>}
+                    {route.name === 'Doktor Randevuları' && <TouchableOpacity onPress={() => navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: route.name }],
+                        })
+                    )
+                    } >
+                        <Icon name='refresh-circle-outline' color='#fff' size={40} />
+                    </TouchableOpacity>}
+                    {route.name === 'Randevular' && <TouchableOpacity onPress={() => navigation.dispatch(
                         CommonActions.reset({
                             index: 0,
                             routes: [{ name: route.name }],

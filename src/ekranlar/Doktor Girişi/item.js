@@ -11,15 +11,15 @@ const Item = ({ item, menuAcik }) => {
         return (
             <View style={{ flexDirection: 'row', gap: -1, }}>
                 <View style={{ flexDirection: 'row', gap: -1, }}>
-                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#00be00', paddingHorizontal: 20, }}
+                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#2D567B', paddingHorizontal: 20, }}
                         onPress={() => { ref.current.close(); tamamlaRandevu(); console.log(item.id) }} >
-                        <Text>Onayla</Text>
+                        <Text style={{ color: '#fff' }}>Onayla</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={{ flexDirection: 'row', gap: -1, backgroundColor: '#ff0000' }}>
-                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#ff0000', paddingHorizontal: 20, }}
+                <View style={{ flexDirection: 'row', gap: -1, backgroundColor: '#d60000' }}>
+                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#d60000', paddingHorizontal: 20, }}
                         onPress={() => { ref.current.close(); gelinmediRandevu() }}>
-                        <Text>İptal Et</Text>
+                        <Text style={{ color: '#fff' }}>İptal Et</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -93,13 +93,13 @@ const Item = ({ item, menuAcik }) => {
     }, [item.acik])
 
     return (
-        <Swipeable ref={ref} containerStyle={{ backgroundColor: '#00be00', borderRadius: 12, }} renderRightActions={kayanButon} onSwipeableOpen={() => { menuAcik(item.id) }}>
+        <Swipeable ref={ref} containerStyle={{ backgroundColor: '#2D567B', borderRadius: 12, }} renderRightActions={kayanButon} onSwipeableOpen={() => { menuAcik(item.id) }}>
             <View style={{ backgroundColor: '#fff', borderRadius: 12, flexDirection: 'row', }}>
                 <View style={{ padding: 20, backgroundColor: '#03244f' }}>
                     <Icon name='clock' size={48} color='#fff' />
                 </View>
-                <View style={{ marginLeft: 15, justifyContent: 'center', gap: 10 }}>
-                    <Text style={{ color: '#03244f', }}>Adı Soyadı:{'\n' + item.hastaAdı}</Text>
+                <View style={{ marginLeft: 15, marginTop: 11, justifyContent: 'center', gap: 10 }}>
+                    <Text style={{ color: '#03244f', }}>{item.hastaAdı}</Text>
                     <View style={{ flexDirection: 'row', gap: 20 }}>
                         <Text style={{ color: '#03244f', fontSize: 12 }}>Tarih: {'\n' + item.randevuTarihi}</Text>
                         <Text style={{ color: '#03244f', fontSize: 12 }}>Saati: {'\n' + item.randevuSaati}</Text>
@@ -108,7 +108,7 @@ const Item = ({ item, menuAcik }) => {
 
                 <View style={{
                     position: 'absolute', paddingVertical: 4, width: 130, alignItems: 'center', right: 0, borderTopRightRadius: 12, borderBottomLeftRadius: 12,
-                    backgroundColor: item.randevuDurumu === 'Randevu Alındı' ? '#04479e' : item.randevuDurumu === 'Randevu Tamamlandı' ? '#1BBCA9' : (item.randevuDurumu === 'Randevuya Gelinmedi' || item.randevuDurumu === 'Hasta İptal Etti') && '#d60000'
+                    backgroundColor: item.randevuDurumu === 'Randevu Alındı' ? '#04479E' : item.randevuDurumu === 'Randevu Tamamlandı' ? '#2A8EC6' : (item.randevuDurumu === 'Randevuya Gelinmedi' || item.randevuDurumu === 'Hasta İptal Etti') && '#d60000'
                 }}>
                     <Text style={{ fontSize: 9, color: '#fff', letterSpacing: 0.67 }}>{item.randevuDurumu}</Text>
                 </View>

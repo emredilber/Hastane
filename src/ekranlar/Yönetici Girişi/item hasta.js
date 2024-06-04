@@ -9,14 +9,14 @@ const Item = ({ item, menuAcik, hastaSil, navigation }) => {
         return (
             <View style={{ flexDirection: 'row', gap: -1, }}>
                 <View style={{ flexDirection: 'row', }}>
-                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#00be00', paddingHorizontal: 20, }}
+                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#2D567B', paddingHorizontal: 20, }}
                         onPress={() => { ref.current.close(); navigation.navigate('Hasta Düzenleme', { hastaTc: item.tc }); }} >
-                        <Text>Hastayı{'\n'}Düzenle</Text>
+                        <Text style={{ textAlign: 'center' }}>Hastayı{'\n'}Düzenle</Text>
                     </TouchableOpacity>
                 </View>
 
-                <View style={{ flexDirection: 'row', backgroundColor: '#ff0000' }}>
-                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#ff0000', paddingHorizontal: 20, }}
+                <View style={{ flexDirection: 'row', backgroundColor: '#d60000' }}>
+                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#d60000', paddingHorizontal: 20, }}
                         onPress={() => {
                             ref.current.close();
                             Alert.alert(
@@ -29,7 +29,7 @@ const Item = ({ item, menuAcik, hastaSil, navigation }) => {
                                 { cancelable: true }
                             );
                         }}>
-                        <Text>Hastayı Sil</Text>
+                        <Text style={{ textAlign: 'center' }}>Hastayı{'\n'} Sil</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -44,10 +44,10 @@ const Item = ({ item, menuAcik, hastaSil, navigation }) => {
     }, [item.acik])
 
     return (
-        <Swipeable ref={ref} containerStyle={{ backgroundColor: '#00be00', borderRadius: 12, }} renderRightActions={kayanButon} onSwipeableOpen={() => { menuAcik(item.tc) }} >
+        <Swipeable ref={ref} containerStyle={{ backgroundColor: '#2D567B', borderRadius: 12, }} renderRightActions={kayanButon} onSwipeableOpen={() => { menuAcik(item.tc) }} >
             <View style={{ backgroundColor: '#fff', borderRadius: 12, flexDirection: 'row', }}>
                 <View style={{ marginLeft: 15, justifyContent: 'center', gap: 10, marginVertical: 10 }}>
-                    <Text style={{ color: '#03244f', width: 220 }}>Doktor Adı Soyadı: {item.ad + ' ' + item.soyad}</Text>
+                    <Text style={{ color: '#03244f', width: 220 }}>{item.ad + ' ' + item.soyad}</Text>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={{ color: '#03244f', fontSize: 12 }}>E-mail: {item.email} / </Text>
                         <Text style={{ color: '#03244f', fontSize: 12 }}>Kan Grubu: {item.kangrubu}</Text>
@@ -60,7 +60,7 @@ const Item = ({ item, menuAcik, hastaSil, navigation }) => {
                         <Text style={{ color: '#03244f', fontSize: 12 }}>Cinsiyeti: {item.cinsiyet} / </Text>
                         <Text style={{ color: '#03244f', fontSize: 12 }}>Doğum Yeri: {item.dogumyeri}</Text>
                     </View>
-                        <Text style={{ color: '#03244f', fontSize: 12 }}>Adres: {item.adres}</Text>
+                    <Text style={{ color: '#03244f', fontSize: 12 }}>Adres: {item.adres}</Text>
                 </View>
 
                 <View style={{

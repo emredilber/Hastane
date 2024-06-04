@@ -25,7 +25,7 @@ const KayitOl = ({ navigation }) => {
     const [sifre, setSifre] = useState('');
     const [yukleniyorSehir, setYukleniyorSehir] = useState(false);
 
-    const kanGrupları = [
+    const [kanGrupları,setKanGrupları] = useState([
         { title: 'AB Rh+' },
         { title: 'AB Rh-' },
         { title: 'A Rh+' },
@@ -34,7 +34,7 @@ const KayitOl = ({ navigation }) => {
         { title: 'B Rh-' },
         { title: '0 Rh+' },
         { title: '0 Rh-' },
-    ];
+    ]);
     const [sehirler, setSehirler] = useState([]);
 
     useEffect(() => {
@@ -151,8 +151,8 @@ const KayitOl = ({ navigation }) => {
             <View style={{ height: 90, backgroundColor: '#03244f', zIndex: 999, alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, gap: 10, justifyContent: 'space-between' }}>
                 <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
                     <Image source={require('../assets/iaü.png')} style={{ width: 60, height: 60 }} />
-                    <View>
-                        <Text style={{ color: '#fff' }}>İSTANBUL AYDIN ÜNİVERSİTESİ HASTANESİ</Text>
+                    <View style={{}}>
+                        <Text style={{ color: '#fff', }}>İSTANBUL AYDIN ÜNİVERSİTESİ{'\n'}VM MEDİCAL PARK HASTANESİ</Text>
                         <Text style={{ color: '#fff', fontSize: 13, marginTop: 10 }}>Kayıt Ol</Text>
                     </View>
                 </View>
