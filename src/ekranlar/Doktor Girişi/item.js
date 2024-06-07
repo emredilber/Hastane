@@ -70,15 +70,7 @@ const Item = ({ item, menuAcik }) => {
             Alert.alert('Uyarı', 'Bu randevu tarihini düzenleyemezsiniz çünkü randevu tarihi geçmişte.');
             return;
         }
-
-        /* İleri bir tarihe kadar mı kontrol et (örn. 4 saat)
-        const ileriTarih = new Date(now.getTime() + (4 * 60 * 60 * 1000));
-
-        if (randevuTarihi < ileriTarih) {
-            Alert.alert('Uyarı', `Bu randevuyu ancak 4 saatten fazla bir süre önce onaylayabilirsiniz.`);
-            return;
-        }*/
-
+        
         // Firestore'da randevu durumunu güncelle
         firestore().collection('randevular').doc(item.id).set({ randevuDurumu: 'Randevuya Gelinmedi' }, { merge: true })
             .then(() => console.log('Randevuya Gelinmedi'))
