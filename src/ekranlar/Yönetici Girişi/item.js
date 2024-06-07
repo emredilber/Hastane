@@ -11,7 +11,7 @@ const Item = ({ item, menuAcik, doktorSil, navigation }) => {
                 <View style={{ flexDirection: 'row', }}>
                     <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#2D567B', paddingHorizontal: 20, }}
                         onPress={() => { ref.current.close(); navigation.navigate('Doktor Düzenleme', { doktorTc: item.tc }); }} >
-                        <Text>Doktoru{'\n'}Düzenle</Text>
+                        <Text style={{ textAlign: 'center', color: '#fff' }}>Doktoru{'\n'}Düzenle</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -29,7 +29,7 @@ const Item = ({ item, menuAcik, doktorSil, navigation }) => {
                                 { cancelable: true }
                             );
                         }}>
-                        <Text>Doktoru Sil</Text>
+                        <Text style={{ textAlign: 'center', color: '#fff' }}>Doktoru{'\n'}Sil</Text>
                     </TouchableOpacity>
                 </View>
             </View>

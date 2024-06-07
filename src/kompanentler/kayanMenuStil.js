@@ -44,7 +44,7 @@ const KayanMenuStili = ({ navigation1, navigation, tc, ad }) => {
                 >
 
                     <Icon name='log-out-outline' size={30} color='#fff' />
-                    <Text style={{ color: '#fff', marginLeft: 15 }}>Çıkış yap</Text>
+                    <Text style={{ color: '#fff', marginLeft: 15 }}>Oturumu Kapat</Text>
 
                 </TouchableOpacity>
 

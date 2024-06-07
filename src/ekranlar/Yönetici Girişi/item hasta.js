@@ -11,7 +11,7 @@ const Item = ({ item, menuAcik, hastaSil, navigation }) => {
                 <View style={{ flexDirection: 'row', }}>
                     <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#2D567B', paddingHorizontal: 20, }}
                         onPress={() => { ref.current.close(); navigation.navigate('Hasta Düzenleme', { hastaTc: item.tc }); }} >
-                        <Text style={{ textAlign: 'center' }}>Hastayı{'\n'}Düzenle</Text>
+                        <Text style={{ textAlign: 'center', color: '#fff' }}>Hastayı{'\n'}Düzenle</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -29,7 +29,7 @@ const Item = ({ item, menuAcik, hastaSil, navigation }) => {
                                 { cancelable: true }
                             );
                         }}>
-                        <Text style={{ textAlign: 'center' }}>Hastayı{'\n'} Sil</Text>
+                        <Text style={{ textAlign: 'center', color: '#fff' }}>Hastayı{'\n'} Sil</Text>
                     </TouchableOpacity>
                 </View>
             </View>
