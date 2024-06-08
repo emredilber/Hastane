@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { BackHandler } from 'react-native';
+import { SafeAreaView, Text, View, Image, BackHandler } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import Giris from './ekranlar/giris';
 import HastaGiris from './ekranlar/Hasta Girişi/hastaGiris';
@@ -29,7 +30,7 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator> {/* Ekranlar tanımlanıyor, companentler ile de hangi dosyalar çağırılacak onlar belirleniyor*/}
+      <Stack.Navigator>
         <Stack.Screen name="Giris" component={Giris} options={{ headerShown: false, cardStyle: { backgroundColor: '#fff' } }} />
         <Stack.Screen name="HastaGiris" component={HastaGiris} options={{ headerShown: false, cardStyle: { backgroundColor: '#fff' } }} />
         <Stack.Screen name="DoktorGiris" component={DoktorGiris} options={{ headerShown: false, cardStyle: { backgroundColor: '#fff' } }} />
