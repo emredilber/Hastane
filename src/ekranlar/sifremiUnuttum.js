@@ -14,15 +14,12 @@ const SifremiUnuttum = ({ navigation }) => {
   const [hata, setHata] = useState('');
   const [yenile, setYenile] = useState(false);
 
-  const sifreguncelle = async () => {
-
+  const sifreguncelle = async () => { // Güncelle butonuna basınca çalışacak kodlar.
     if (sifre.length < 1) {
-      // Eğer şifre doğrulaması yapılmak isteniyorsa ve kısa ise hata göster
       Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
       return;
-    }
+    } // Girilen metinlerde hata varmı kontrol ediliyor.
     else if (sifreTekrar.length < 1) {
-      // Eğer şifre doğrulaması yapılmak isteniyorsa ve kısa ise hata göster
       Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
       return;
     } else if (tc === '' || !/^\d+$/.test(tc)) {
@@ -33,31 +30,25 @@ const SifremiUnuttum = ({ navigation }) => {
       return;
     }
 
-    if (sifre === sifreTekrar) {
+    if (sifre === sifreTekrar) { // Şifreler aynı mı kontrol ediliyor.
       setHata('')
       try {
-        // Firestore'dan belgeyi al
         const dokuman = firestore().collection("hastalar").doc(tc);
-        const sorgu = await dokuman.get();
+        const sorgu = await dokuman.get(); // Veri tabanından girilen TC'nin dökümanı alınıyor.
 
-        if (sorgu.exists) {
-          // Şifreyi güncelle
-          await dokuman.set({ şifre: sifre }, { merge: true });
-          // Başarı mesajı göster
+        if (sorgu.exists) { // Veri tabanında veri varsa...
+          await dokuman.set({ şifre: sifre }, { merge: true }); // Şifre değiştiriliyor.
           Alert.alert("Bilgi", "Şifre başarıyla güncellendi.", [{ text: 'Tamam' }]);
-          navigation.navigate('Giris')
+          navigation.navigate('Giris'); // Şifre değişikliği sonrası giriş ekranına yönlendiriliyor.
           setYenile(false);
         } else {
-          // Kullanıcı bulunamadı hatası
           Alert.alert("Hata", "Kullanıcı bulunamadı.", [{ text: 'Tamam' }])
         }
       } catch (ex) {
-        // Hata durumunda mesaj göster
         Alert.alert("Hata", "Şifre güncellenirken bir hata oluştu: " + ex.message, [{ text: 'Tamam' }]);
       }
     }
     else {
-      // Şifreler eşit değil hatası
       setHata("Şifreler eşit değil.");
     }
   };

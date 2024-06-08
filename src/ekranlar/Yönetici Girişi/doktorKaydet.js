@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Button, Alert, SafeAreaView, ScrollView, Platform, Image, Text, Animated, TouchableOpacity } from 'react-native';
+import { View, Alert, SafeAreaView, ScrollView, Text, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import CustomInput from '../../kompanentler/custominput';
 import CustomDropdown from '../../kompanentler/customDropDown';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import Icon2 from 'react-native-vector-icons/SimpleLineIcons'
 import { useFocusEffect } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker'
 
@@ -27,7 +26,7 @@ const DoktorKaydet = ({ navigation }) => {
     const [sehirler, setSehirler] = useState([]);
     const [poliklinikler, setPoliklinikler] = useState([]);
 
-    const poliklinikGetir = async () => {
+    const poliklinikGetir = async () => { // Polikklinik adları getiriliyor.
         setYukleniyorPol(true);
         try {
             const snapshot = await firestore().collection('poliklinikler').orderBy('poliklinikAdı').get();
@@ -41,7 +40,7 @@ const DoktorKaydet = ({ navigation }) => {
         }
     };
 
-    const sehirleriGetir = async () => {
+    const sehirleriGetir = async () => { // Şehir adları getiriliyor.
         setYukleniyorSehir(true);
         try {
             const snapshot = await firestore().collection('sehirler').orderBy('SehirAdi').get();
@@ -55,15 +54,13 @@ const DoktorKaydet = ({ navigation }) => {
         }
     };
 
-
-    const handleRegister = async () => {
-        if (cinsiyet === '') {
+    const handleRegister = async () => { // Kaydet butonuna basınca olacaklar.
+        if (cinsiyet === '') { // Hata tespiti yapılıyor.
             setCinsiyet('girilmedi');
             Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
             return;
         }
         if (sifre && sifre.length < 1) {
-            // Eğer şifre doğrulaması yapılmak isteniyorsa ve kısa ise hata göster
             Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
             return;
         } else if ((tc || gsm) && tc !== '' && gsm !== '' && !/^\d+$/.test(tc) && !/^\d+$/.test(gsm)) {
@@ -96,12 +93,12 @@ const DoktorKaydet = ({ navigation }) => {
             const sehirSnapshot = await firestore()
                 .collection('sehirler')
                 .where('SehirAdi', '==', dogumyeri)
-                .get();
+                .get(); // Şehirin id'si alınıyor.
 
 
             const sehirId = sehirSnapshot.docs[0].id;
             const kaydet = firestore().collection('doktorlar').doc(tc);
-            const sorgu = await kaydet.get();
+            const sorgu = await kaydet.get(); // Kaydedilecek döküman referansı alınıyor.
             if (!sorgu.exists) {
                 const user = {
                     tc: tc,
@@ -114,7 +111,7 @@ const DoktorKaydet = ({ navigation }) => {
                     gsm: gsm,
                     şifre: sifre
                 };
-                await kaydet.set(user);
+                await kaydet.set(user); // Kaydediliyor.
                 setYenile(true);
                 setYenile(false);
                 setCinsiyet('');
@@ -130,7 +127,8 @@ const DoktorKaydet = ({ navigation }) => {
 
         }
     };
-    useFocusEffect(
+
+    useFocusEffect( // Sayfa ilk açıldığı zaman bu işlemler yürütülüyor.
         useCallback(() => {
             setYenile(false);
             poliklinikGetir();
@@ -140,8 +138,9 @@ const DoktorKaydet = ({ navigation }) => {
 
     const tarihDegisimi = (event, selectedDate) => {
         setDateGoster(false);
-        setDate(selectedDate)
-        const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}.${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`;
+        setDate(selectedDate) // Tarihi string formatına çevirme.
+        const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}.${(
+            selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`;
         setDogumtarihi(formattedDate);
     };
 
@@ -178,10 +177,11 @@ const DoktorKaydet = ({ navigation }) => {
                         <Text style={{ marginTop: 5, fontSize: 14, color: 'red' }}>{cinsiyet === 'girilmedi' && 'Cinsiyet seçiniz.'}</Text>
                     </View>
                     <CustomDropdown data={poliklinikler} onSelect={async (secilenPol) => {
-                        let poladi = await firestore().collection('poliklinikler').where('poliklinikAdı','==',secilenPol.title).get();
+                        let poladi = await firestore().collection('poliklinikler').where('poliklinikAdı', '==', secilenPol.title).get();
                         setSecilenPoliklinikId(poladi.docs[0].id);
                     }} placeholder="Poliklinik Seçimi" poliklinikSecimGirisi geciciVeri yukleniyor={yukleniyorPol} />
-                    <CustomDropdown data={sehirler} onSelect={(selectedItem) => { setDogumyeri(selectedItem.title); }} placeholder="Doğum Yeri" dogumYeriGirisi geciciVeri yukleniyor={yukleniyorSehir} />
+                    <CustomDropdown data={sehirler} onSelect={(selectedItem) => { setDogumyeri(selectedItem.title); }}
+                        placeholder="Doğum Yeri" dogumYeriGirisi geciciVeri yukleniyor={yukleniyorSehir} />
                     <TouchableOpacity onPress={() => { setDateGoster(true) }} >
                         <CustomInput placeholder="Doğum Tarihi" veri={dogumtarihi} disable={false} yenile={yenile} />
                     </TouchableOpacity>

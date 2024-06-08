@@ -1,11 +1,10 @@
-import { View, Text, Alert, TouchableOpacity, Animated, ActivityIndicator } from 'react-native'
+import { View, Text, Alert, TouchableOpacity, Animated } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import firestore from '@react-native-firebase/firestore'
 import CustomInput from '../../kompanentler/custominput'
 import { useFocusEffect } from '@react-navigation/native'
 import { ScrollView } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { flingGestureHandlerProps } from 'react-native-gesture-handler/lib/typescript/handlers/FlingGestureHandler'
 
 
 const HastaBilgileriGuncelle = ({ route }) => {
@@ -19,11 +18,11 @@ const HastaBilgileriGuncelle = ({ route }) => {
     const [adres1, setAdres1] = useState('');
     const [sifre, setSifre] = useState('');
     const [sifreTekrar, setSifreTekrar] = useState('');
-    const [yukleniyor, setYukleniyor] = useState(false); // Yeni yüklenme durumu
+    const [yukleniyor, setYukleniyor] = useState(false);
     const [yenile, setYenile] = useState(false);
 
 
-    const bilgileriGetir = async () => {
+    const bilgileriGetir = async () => { // Sayfa yüklendiğinde ilk önce veri tabanındaki bilgiler değişkene aktarılıyor.
         setYukleniyor(true);
         try {
             setGsm(('')); setEmail(('')); setAdres(('')); setGsm1(('')); setEmail1(('')); setAdres1((''));
@@ -51,9 +50,8 @@ const HastaBilgileriGuncelle = ({ route }) => {
         }, [])
     );
 
-
     const verileriGuncelle = async () => {
-
+        // Girilen değerlerde hata varmı kontrol ediliyor.
         if (tc === '' || !/^\d+$/.test(tc)) {
             Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
             return;
@@ -68,14 +66,14 @@ const HastaBilgileriGuncelle = ({ route }) => {
             return;
         }
         setYenile(false);
-        if (sifreGoster) {
+        if (sifreGoster) { // Şifre değiştirecekse CheckBox'u seçiyor
             if (sifre === sifreTekrar) {
                 if (sifre !== '' && sifreTekrar !== '') {
                     setHata('')
                     try {
                         // Firestore'dan belgeyi al
                         const dokuman = firestore().collection("hastalar").doc(tc);
-                        const sorgu = await dokuman.get();
+                        const sorgu = await dokuman.get(); // Veri tabanından döküman referansı alınıyor.
 
                         if (sorgu.exists) {
 
@@ -85,9 +83,9 @@ const HastaBilgileriGuncelle = ({ route }) => {
                                 adres: adres,
                                 şifre: sifre
                             };
-                            await dokuman.set(kullanıcı, { merge: true });
+                            await dokuman.set(kullanıcı, { merge: true }); // Bilgileri güncelleniyor.
                             Alert.alert("Bilgi", "Şifre başarıyla güncellendi.", [{ text: 'Tamam' }]);
-                            bilgileriGetir()
+                            bilgileriGetir(); // Tekrardan sayfa açıldığındaki kodlar çalıştırılıyor.
                             setYenile(true);
                         } else {
                             Alert.alert("Hata", "Kullanıcı bulunamadı.", [{ text: 'Tamam' }])
@@ -101,13 +99,11 @@ const HastaBilgileriGuncelle = ({ route }) => {
                 }
             }
             else {
-                // Şifreler eşit değil hatası
                 setHata("Şifreler eşit değil.");
             }
         }
         else {
             try {
-                // Firestore'dan belgeyi al
                 const dokuman = firestore().collection("hastalar").doc(tc);
                 const sorgu = await dokuman.get();
 
@@ -120,7 +116,7 @@ const HastaBilgileriGuncelle = ({ route }) => {
                     };
                     await dokuman.set(kullanıcı, { merge: true });
                     Alert.alert("Bilgi", "Şifre başarıyla güncellendi.", [{ text: 'Tamam' }]);
-                    bilgileriGetir()
+                    bilgileriGetir(); // Tekrardan sayfa açıldığındaki kodlar çalıştırılıyor.
                 } else {
                     Alert.alert("Hata", "Kullanıcı bulunamadı.", [{ text: 'Tamam' }])
                 }
@@ -131,17 +127,17 @@ const HastaBilgileriGuncelle = ({ route }) => {
         }
     };
     const [sifreGoster, setSifreGoster] = useState(false);
-    const [formOpacity] = useState(new Animated.Value(0)); // Formun pozisyonunu saklamak için
-    const handleGosterDegisim = () => {
+    const [formOpacity] = useState(new Animated.Value(0));
+    // İsteğe bağlı şifre değişiminin yapılması için animasyonlu şekilde ekranda belirmesi sağlanıyor.
+    const sifreDegisim = () => {
         setSifreGoster(!sifreGoster);
         if (sifreGoster) {
             setSifre(''); setSifreTekrar(''); setHata('');
         }
-        // Formu yavaş yavaş görünür hale getirmek için animasyon başlat
-        Animated.timing(formOpacity, {
-            toValue: sifreGoster ? 0 : 1, // Formun opaklık değeri
-            duration: 300, // Animasyon süresi
-            useNativeDriver: false, // Native sürücü kullan
+        Animated.timing(formOpacity, { // Eğer CheckBox seçili ise metinler getiriliyor.
+            toValue: sifreGoster ? 0 : 1,
+            duration: 300,
+            useNativeDriver: false,
         }).start();
     };
 
@@ -155,15 +151,15 @@ const HastaBilgileriGuncelle = ({ route }) => {
                         <CustomInput placeholder="GSM" onChangeText={setGsm} gsmGirisi veri={gsm1} yukleniyor={yukleniyor} />
                         <CustomInput placeholder="Email" onChangeText={setEmail} emailGirisi veri={email1} yukleniyor={yukleniyor} />
                         <CustomInput placeholder="Adres" onChangeText={setAdres} veri={adres1} yukleniyor={yukleniyor} />
-                        <TouchableOpacity onPress={handleGosterDegisim} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableOpacity onPress={sifreDegisim} style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon name={sifreGoster ? 'checkbox-marked' : 'checkbox-blank-outline'} size={24} color={'#03244f'} />
                             <Text style={{ fontSize: 16, color: '#03244f', marginLeft: 10 }}>Şifre Değişikliği</Text>
                         </TouchableOpacity>
                         <Animated.View style={{ gap: 10, marginTop: 10, height: formOpacity.interpolate({ inputRange: [0, 1], outputRange: [0, 160] }), }}>
                             {sifreGoster && (
                                 <>
-                                    <CustomInput placeholder={'Şifre'} onChangeText={setSifre} secureTextEntry sifreGirisi hata={hata} yenile={yenile}/>
-                                    <CustomInput placeholder={'Şifre Tekrar'} onChangeText={setSifreTekrar} secureTextEntry sifreGirisi hata={hata} yenile={yenile}/>
+                                    <CustomInput placeholder={'Şifre'} onChangeText={setSifre} secureTextEntry sifreGirisi hata={hata} yenile={yenile} />
+                                    <CustomInput placeholder={'Şifre Tekrar'} onChangeText={setSifreTekrar} secureTextEntry sifreGirisi hata={hata} yenile={yenile} />
                                 </>
                             )}
                         </Animated.View>

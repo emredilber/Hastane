@@ -1,4 +1,4 @@
-import { View, Text, Alert, TouchableOpacity, Animated, ActivityIndicator } from 'react-native'
+import { View, Text, Alert, TouchableOpacity, Animated } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import firestore from '@react-native-firebase/firestore'
 import CustomInput from '../../kompanentler/custominput'
@@ -17,7 +17,7 @@ const DoktorBilgileriGuncelle = ({ route }) => {
     const [sifreGoster, setSifreGoster] = useState(false);
     const [yenile, setYenile] = useState(false);
 
-    const bilgileriGetir = async () => {
+    const bilgileriGetir = async () => { // Sayfa yüklendiğinde ilk önce veri tabanındaki bilgiler değişkene aktarılıyor.
         setYukleniyor(true);
 
         try {
@@ -44,19 +44,20 @@ const DoktorBilgileriGuncelle = ({ route }) => {
 
 
     const verileriGuncelle = async () => {
+        // Girilen değerlerde hata varmı kontrol ediliyor.
         if (gsm && !/^(05\d{9})$/.test(gsm)) {
             Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
             return;
         }
         setYenile(false);
-        if (sifreGoster) {
+        if (sifreGoster) { // Şifre değiştirecekse CheckBox'u seçiyor
             if (sifre === sifreTekrar) {
                 if (sifre !== '' && sifreTekrar !== '') {
                     setHata('')
                     try {
                         // Firestore'dan belgeyi al
                         const dokuman = firestore().collection("doktorlar").doc(tc);
-                        const sorgu = await dokuman.get();
+                        const sorgu = await dokuman.get(); // Veri tabanından döküman referansı alınıyor.
 
                         if (sorgu.exists) {
 
@@ -64,9 +65,9 @@ const DoktorBilgileriGuncelle = ({ route }) => {
                                 gsm: gsm,
                                 şifre: sifre
                             };
-                            await dokuman.set(kullanıcı, { merge: true });
+                            await dokuman.set(kullanıcı, { merge: true }); // Bilgileri güncelleniyor.
                             Alert.alert("Bilgi", "Şifre başarıyla güncellendi.", [{ text: 'Tamam' }]);
-                            bilgileriGetir();
+                            bilgileriGetir(); // Tekrardan sayfa açıldığındaki kodlar çalıştırılıyor.
                             setYenile(true);
                         } else {
                             Alert.alert("Hata", "Kullanıcı bulunamadı.", [{ text: 'Tamam' }])
@@ -86,16 +87,16 @@ const DoktorBilgileriGuncelle = ({ route }) => {
         else {
             try {
                 const dokuman = firestore().collection("doktorlar").doc(tc);
-                const sorgu = await dokuman.get();
+                const sorgu = await dokuman.get(); // Veri tabanından döküman referansı alınıyor.
 
                 if (sorgu.exists) {
 
                     const kullanıcı = {
                         gsm: gsm,
                     };
-                    await dokuman.set(kullanıcı, { merge: true });
+                    await dokuman.set(kullanıcı, { merge: true }); // Bilgileri güncelleniyor.
                     Alert.alert("Bilgi", "Şifre başarıyla güncellendi.", [{ text: 'Tamam' }]);
-                    bilgileriGetir();
+                    bilgileriGetir(); // Tekrardan sayfa açıldığındaki kodlar çalıştırılıyor.
                 } else {
                     Alert.alert("Hata", "Kullanıcı bulunamadı.", [{ text: 'Tamam' }])
                 }
@@ -104,17 +105,17 @@ const DoktorBilgileriGuncelle = ({ route }) => {
             }
         }
     };
-    const [sifreOpacity] = useState(new Animated.Value(0)); // Formun pozisyonunu saklamak için
+    const [sifreOpacity] = useState(new Animated.Value(0));
+    // İsteğe bağlı şifre değişiminin yapılması için animasyonlu şekilde ekranda belirmesi sağlanıyor.
     const sifreDegisim = () => {
         setSifreGoster(!sifreGoster);
         if (sifreGoster) {
             setSifre(''); setSifreTekrar(''); setHata('');
         }
-        // Formu yavaş yavaş görünür hale getirmek için animasyon başlat
-        Animated.timing(sifreOpacity, {
-            toValue: sifreGoster ? 0 : 1, // Formun opaklık değeri
-            duration: 300, // Animasyon süresi
-            useNativeDriver: false, // Native sürücü kullan
+        Animated.timing(sifreOpacity, { // Eğer CheckBox seçili ise metinler getiriliyor.
+            toValue: sifreGoster ? 0 : 1,
+            duration: 300,
+            useNativeDriver: false,
         }).start();
     };
 

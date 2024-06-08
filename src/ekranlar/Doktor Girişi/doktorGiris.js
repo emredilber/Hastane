@@ -1,7 +1,6 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, BackHandler, Alert, Image, TouchableOpacity, Button, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
 import Randevularim from './doktorRandevularim'
 import sayfaBasligi from '../../kompanentler/sayfaBasligi'
 import KayanMenuStili from '../../kompanentler/kayanMenuStil'
@@ -16,6 +15,7 @@ const DoktorGiris = ({ route, navigation }) => {
 
     const Drawer1 = () => {
         return (
+            // Ekranların gözükeceği yapı ve ekranların bileşenler tasarlanıyor.
             <Drawer.Navigator
                 drawerContent={(props) => <KayanMenuStili navigation1={navigation}{...props} tc={tc} ad={ad} />}
                 screenOptions={({ navigation, route }) => ({
@@ -32,13 +32,12 @@ const DoktorGiris = ({ route, navigation }) => {
 
     return (
         <NavigationContainer independent={true}>
-
-
             <Stack.Navigator>
-                <Stack.Screen name="Deneme" component={Drawer1} initialParams={{ tc: tc }} options={{ headerShown: false, cardStyle: {} }} />
-                <Stack.Screen name="Test" component={Randevularim} initialParams={{ tc: tc }} options={{ headerShown: false, cardStyle: { backgroundColor: '#fff' } }} />
+                <Stack.Screen name="Deneme" component={Drawer1} initialParams={{ tc: tc }}
+                    options={{ headerShown: false, cardStyle: {} }} />
+                <Stack.Screen name="Test" component={Randevularim} initialParams={{ tc: tc }}
+                    options={{ headerShown: false, cardStyle: { backgroundColor: '#fff' } }} />
             </Stack.Navigator>
-
         </NavigationContainer>
     );
 };

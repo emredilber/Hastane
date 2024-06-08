@@ -1,8 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, FlatList, BackHandler, Alert, Image, TouchableOpacity, Button, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, Alert, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore'
-import { useFocusEffect } from '@react-navigation/native';
-import CustomDropdown from '../../kompanentler/customDropDown';
 import Item from './item hasta';
 import CustomInput from '../../kompanentler/custominput';
 
@@ -13,12 +11,13 @@ const Hastalar = ({ route, navigation }) => {
     const [filteredHastalar, setFilteredHastalar] = useState([]);
     const [arananHasta, setArananHasta] = useState('');
 
-    const hastalarıGetir = async () => {
+    const hastalarıGetir = async () => { // Hastalar değişkene atarılıyor.
         try {
             const querySnapshot = await firestore().collection('hastalar').get();
 
             const hastalarList = await Promise.all(querySnapshot.docs.map(async (documentSnapshot) => {
-                const sehiri = await firestore().collection('sehirler').doc(documentSnapshot.get('dogumyeri')).get();
+                const sehiri = await firestore().collection('sehirler').
+                    doc(documentSnapshot.get('dogumyeri')).get(); // Şehir isimleri alınıyor.
                 return {
                     tc: documentSnapshot.id,
                     ad: documentSnapshot.get('ad'),
@@ -42,47 +41,47 @@ const Hastalar = ({ route, navigation }) => {
         }
     };
 
-    const hastaSil = async (tc) => {
+    const hastaSil = async (tc) => { // Hasta silmek istenildiği zaman çalışacak kodlar.
         try {
             await firestore().collection('hastalar').doc(tc).delete();
             setFilteredHastalar(prevState => prevState.filter(item => item.tc !== tc));
-            setHastalar(prevState => prevState.filter(item => item.tc !== tc));
+            setHastalar(prevState => prevState.filter(item => item.tc !== tc)); // İki değişkenden de siliniyor.
         } catch (error) {
             Alert.alert("Hata", "Hasta silinirken bir hata oluştu: " + error.message, [{ text: "Tamam" }]);
         }
     };
 
-    useEffect(() => {
+    useEffect(() => { // Sayfa ilk açıldığı zaman çalışacak kodlar.
         setLoading(true);
         hastalarıGetir();
     }, [])
 
 
-    useEffect(() => {
+    useEffect(() => { // Filtrelenen değer olunca otomatik olarak algılayan yapı.
         if (arananHasta !== '') {
             const filteredList = hastalar.filter(hasta =>
                 hasta.ad.toLowerCase().includes(arananHasta.toLowerCase()) ||
                 hasta.soyad.toLowerCase().includes(arananHasta.toLowerCase()) ||
                 `${hasta.ad.toLowerCase()} ${hasta.soyad.toLowerCase()}`.includes(arananHasta.toLowerCase())
             );
-            setFilteredHastalar(filteredList);
+            setFilteredHastalar(filteredList); // Filtrelenen hastalardeğişkene aktarılıyor.
 
         } else {
-            setFilteredHastalar(hastalar);
+            setFilteredHastalar(hastalar); // Filtreme işlemi olmadığı için ilk değerler değişkene aktarılıyor.
         }
     }, [arananHasta, hastalar]);
 
-    if (loading) {
+    if (loading) { // Veriler yüklendiği sıra ekranda dönen bir simge çıkıyor.
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#03244f" />
-                <Text style={{color:'#03244f'}}>Veriler yükleniyor...</Text>
+                <Text style={{ color: '#03244f' }}>Veriler yükleniyor...</Text>
             </View>
         );
     }
 
     const acikMenu = (tc) => {
-
+        // Doktorlar ile ilgili işlem yapmak için kaydırılan kutu eğer açıksa true değeri gönderiliyor.
         setFilteredHastalar(prevState =>
             prevState.map(item => ({
                 ...item,
@@ -92,12 +91,12 @@ const Hastalar = ({ route, navigation }) => {
 
     }
 
-
     return (
         <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 20, }}>
+            {/* Hastaları adı veya soyadına göre filtreleme yapısı. */}
             <CustomInput placeholder="Aranan Hasta" onChangeText={setArananHasta} containerStyle={{ marginTop: 20 }} />
 
-            <FlatList
+            <FlatList // Hastaları listeleme yapısı.
                 showsVerticalScrollIndicator={false}
                 data={filteredHastalar}
                 keyExtractor={(item) => item.tc}
@@ -110,7 +109,6 @@ const Hastalar = ({ route, navigation }) => {
                             }} hastaSil={hastaSil} navigation={navigation}>
                             </Item>
                         </View>
-
                     )
                 }}
             />

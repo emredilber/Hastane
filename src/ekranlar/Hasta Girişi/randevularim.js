@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, FlatList, BackHandler, Alert, Image, TouchableOpacity, Button, ActivityIndicator } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'
+import React, { useCallback, useState } from 'react';
+import { View, Text, FlatList, Alert, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore'
 import { useFocusEffect } from '@react-navigation/native';
 import Item from './item';
@@ -14,7 +13,7 @@ const Randevularim = ({ route }) => {
 
     const randevularıGetir = async () => {
         try {
-            const querySnapshot = await firestore()
+            const querySnapshot = await firestore() // Hastanın randevuları veri tabanından getiriliyor
                 .collection('randevular')
                 .orderBy('id', 'desc')
                 .where('hastaTC', '==', tc)
@@ -26,7 +25,6 @@ const Randevularim = ({ route }) => {
             else {
                 setHata(false);
             }
-
 
             const randevularList = await Promise.all(querySnapshot.docs.map(async (documentSnapshot) => {
                 return {
@@ -47,13 +45,14 @@ const Randevularim = ({ route }) => {
         }
     };
 
-    useFocusEffect(
+    useFocusEffect( // Randevular sayfası açıldığı zaman çalışacak kodlar.
         useCallback(() => {
             setLoading(true);
             randevularıGetir();
         }, [])
     );
-    if (loading) {
+
+    if (loading) {  // Veriler yüklendiği sıra ekranda dönen bir simge çıkıyor.
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#03244f" />
@@ -63,7 +62,7 @@ const Randevularim = ({ route }) => {
     }
 
     const acikMenu = (id) => {
-
+        // Randevu ile ilgili işlem yapmak için kaydırılan kutu eğer açıksa true değeri gönderiliyor.
         setRandevular(prevState =>
             prevState.map(item => ({
                 ...item,
@@ -73,18 +72,19 @@ const Randevularim = ({ route }) => {
 
     }
 
-
     return (
         <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 20, }}>
-            {hata === false && <FlatList
+            {hata === false && <FlatList // Listeleme yapısı kullanarak randevular listeleniyor.
                 showsVerticalScrollIndicator={false}
                 data={randevular}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={{ gap: 10, paddingVertical: 10 }}
                 renderItem={({ item }) => {
+
+                    {/* Harici bir komponent çağırılıyor kod karışıklığı engelleniyor. */}
                     return (
                         <View style={{ borderColor: '#D9D9D9', borderWidth: 1.2, borderRadius: 12, }}>
-                            <Item item={item} menuAcik={(id) => {
+                            <Item item={item} menuAcik={(id) => { 
                                 acikMenu(id);
                             }} >
                             </Item>
@@ -93,8 +93,9 @@ const Randevularim = ({ route }) => {
                 }}
             />}
 
-            {hata === true && <View style={{alignItems:'center'}}>
-                <Text style={{color:'#03244f',fontSize:16}}>Randevunuz Bulunmamaktadır</Text>
+            {/* Randevusu bulunmazsa ekrana hata yazdırılıyor. */}
+            {hata === true && <View style={{ alignItems: 'center' }}>
+                <Text style={{ color: '#03244f', fontSize: 16 }}>Randevunuz Bulunmamaktadır</Text>
             </View>
             }
         </View>

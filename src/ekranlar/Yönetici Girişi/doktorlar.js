@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, FlatList, BackHandler, Alert, Image, TouchableOpacity, Button, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, Alert, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore'
-import { useFocusEffect } from '@react-navigation/native';
 import CustomDropdown from '../../kompanentler/customDropDown';
 import Item from './item';
 
@@ -14,7 +13,7 @@ const Doktorlar = ({ route, navigation }) => {
     const [yukleniyorPol, setYukleniyorPol] = useState(false);
     const [secilenPoliklinik, setSecilenPoliklinik] = useState('');
 
-    const poliklinikGetir = async () => {
+    const poliklinikGetir = async () => { // Ekran açıldığı zaman poliklinikler filtreleme yerine listeleniyor.
         setYukleniyorPol(true);
         try {
             const snapshot = await firestore().collection('poliklinikler').orderBy('poliklinikAdı').get();
@@ -29,14 +28,15 @@ const Doktorlar = ({ route, navigation }) => {
         }
     };
 
-
-    const doktorlarıGetir = async () => {
+    const doktorlarıGetir = async () => { // Doktorlar değişkene atarılıyor.
         try {
             const querySnapshot = await firestore().collection('doktorlar').get();
 
             const doktorlarList = await Promise.all(querySnapshot.docs.map(async (documentSnapshot) => {
-                const sehiri = await firestore().collection('sehirler').doc(documentSnapshot.get('dogumyeri')).get();
-                const poliklinik = await firestore().collection('poliklinikler').doc(documentSnapshot.get('poliklinik')).get();
+                const sehiri = await firestore().collection('sehirler').
+                    doc(documentSnapshot.get('dogumyeri')).get(); // Şehir ve poliklinik isimleri alınıyor.
+                const poliklinik = await firestore().collection('poliklinikler').
+                    doc(documentSnapshot.get('poliklinik')).get();
                 return {
                     tc: documentSnapshot.id,
                     ad: documentSnapshot.get('ad'),
@@ -59,33 +59,32 @@ const Doktorlar = ({ route, navigation }) => {
     };
 
     const doktorSil = async (tc) => {
-        try {
+        try { // Doktor silmek istenildiği zaman çalışacak kodlar
             await firestore().collection('doktorlar').doc(tc).delete();
             setFilteredDoktorlar(prevState => prevState.filter(item => item.tc !== tc));
-            setDoktorlar(prevState => prevState.filter(item => item.tc !== tc));
+            setDoktorlar(prevState => prevState.filter(item => item.tc !== tc)); // İki değişkenden de siliniyor.
         } catch (error) {
             Alert.alert("Hata", "Doktor silinirken bir hata oluştu: " + error.message, [{ text: "Tamam" }]);
         }
     };
 
-    useEffect(() => {
+    useEffect(() => { // Sayfa ilk açıldığı zaman çalışacak kodlar.
         setLoading(true);
         poliklinikGetir();
         doktorlarıGetir();
     }, [])
 
-
-    useEffect(() => {
+    useEffect(() => { // Filtrelenen değer olunca otomatik olarak algılayan yapı
         if (secilenPoliklinik !== 'Bütün Poliklinikler') {
             const filteredList = doktorlar.filter(doktor => doktor.poliklinik === secilenPoliklinik);
-            setFilteredDoktorlar(filteredList);
+            setFilteredDoktorlar(filteredList); // Filtrelenen doktorlar değişkene aktarılıyor.
 
         } else {
-            setFilteredDoktorlar(doktorlar);
+            setFilteredDoktorlar(doktorlar); // Filtreme işlemi olmadığı için ilk değerler değişkene aktarılıyor.
         }
     }, [secilenPoliklinik, doktorlar]);
 
-    if (loading) {
+    if (loading) { // Veriler yüklendiği sıra ekranda dönen bir simge çıkıyor.
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#03244f" />
@@ -95,7 +94,7 @@ const Doktorlar = ({ route, navigation }) => {
     }
 
     const acikMenu = (tc) => {
-
+        // Doktorlar ile ilgili işlem yapmak için kaydırılan kutu eğer açıksa true değeri gönderiliyor.
         setFilteredDoktorlar(prevState =>
             prevState.map(item => ({
                 ...item,
@@ -105,14 +104,15 @@ const Doktorlar = ({ route, navigation }) => {
 
     }
 
-
     return (
         <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 20, }}>
+            {/* Doktorları polikliniğe göre filtreleme yapısı. */}
             <CustomDropdown data={poliklinikler} onSelect={(secilenPol, index) => {
                 setSecilenPoliklinik(secilenPol.title);
-            }} placeholder="Polikliniğe Göre Filtreleme" poliklinikSecimGirisi geciciVeri yukleniyor={yukleniyorPol} style={{ marginTop: 20 }} />
+            }} placeholder="Polikliniğe Göre Filtreleme"
+                poliklinikSecimGirisi geciciVeri yukleniyor={yukleniyorPol} style={{ marginTop: 20 }} />
 
-            <FlatList
+            <FlatList // Doktorları listeleme yapısı.
                 showsVerticalScrollIndicator={false}
                 data={filteredDoktorlar}
                 keyExtractor={(item) => item.tc}

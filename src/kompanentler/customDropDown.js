@@ -1,30 +1,31 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Animated, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { configureLayoutAnimationBatch } from 'react-native-reanimated/lib/typescript/reanimated2/core';
 import SelectDropdown from 'react-native-select-dropdown';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Icon2 from 'react-native-vector-icons/Feather';
 import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons';
-import { TextInput } from 'react-native-gesture-handler';
 
+// DropDown çağırıldığı zaman gönderilecek veya alınacak değişkenler belirleniyor.
 const CustomDropdown = ({ data, onSelect, placeholder, yukleniyor, veri, style, yenileme, ...props }) => {
+    // Seçilen öğeyi ve dropdown'un açılıp açılmadığını kontrol eden state'ler tanımlanıyor.
     const [selectedItem, setSelectedItem] = useState(null);
     const [isOpened, setIsOpened] = useState(false);
     const labelPosition = useRef(new Animated.Value(0)).current;
     const [error, setError] = useState('');
 
-    useEffect(() => {
+    useEffect(() => { // Eğer geçici veri varsa ve veri değişirse ilk öğeyi seç.
         if (props.geciciVeri && data[0] !== undefined) {
             handleSelect(data[0], 0)
         }
-    }, [data]);
+    }, [data]); // Data her değiştiği zaman bu blok çalışıyor.
 
-    useEffect(() => {
+    useEffect(() => { // Eğer yenileme tanımlanmışsa ve değişirse yenileme işlemini yap.
         if (yenileme !== undefined) {
             handleSelect(yenileme)
         }
-    }, [yenileme])
+    }, [yenileme]); // Yenileme değiştiğinde kodlar çalışacak
 
+    // Bir öğe seçilirse yapılacak olan işlemler
     const handleSelect = (item, index) => {
         setSelectedItem(item);
         onSelect(item, index);
@@ -32,9 +33,10 @@ const CustomDropdown = ({ data, onSelect, placeholder, yukleniyor, veri, style, 
         setError('')
     };
 
-    const handleDropdownToggle = (opened) => {
+    const handleDropdownToggle = (opened) => { // Dropdown açılıp kapandığında yapılan işlemler.
         setIsOpened(opened);
         if (isOpened) {
+            // Hata mesajlarını ayarla
             if (props.dogumYeriGirisi && selectedItem === null)
                 setError('Doğum yerini seçiniz!')
             if (props.kanGrubuGirisi && selectedItem === null)
@@ -50,14 +52,15 @@ const CustomDropdown = ({ data, onSelect, placeholder, yukleniyor, veri, style, 
             animatedLabel(selectedItem ? 1 : 0)
     };
 
-    const animatedLabel = (toValue) => {
+    const animatedLabel = (toValue) => { // Yaznın hareket etmesini sağlamak için animasyon değişkeni.
         Animated.timing(labelPosition, {
             toValue: toValue,
             duration: 300,
             useNativeDriver: false,
         }).start();
     };
-    const labelStyle = {
+
+    const labelStyle = { // Gelen veriye göre 0 ayda 1 ise karşılığındaki değer değiştiriliyor ve hareket ettiriliyor.
         left: 10,
         top: labelPosition.interpolate({
             inputRange: [0, 1],
@@ -82,38 +85,27 @@ const CustomDropdown = ({ data, onSelect, placeholder, yukleniyor, veri, style, 
             <Animated.Text style={[labelStyle, { position: 'absolute', backgroundColor: '#fff', zIndex: 1 }]}>
                 {placeholder}
             </Animated.Text>
-            <SelectDropdown
-                data={data}
-                disabled={yukleniyor}
+            <SelectDropdown // DropDown'un tanımlandığı yer.
+                data={data} // Veriler tanımlanıyor.
+                disabled={yukleniyor} // Devre dışı durumu belirleniyor
                 disableAutoScroll={true}
-                onSelect={handleSelect}
+                onSelect={handleSelect} // Veri seçilirse çalıştırılıyor.
                 onFocus={() => handleDropdownToggle(true)}
                 onBlur={() => handleDropdownToggle(false)}
                 renderButton={() => {
-                    return (
+                    return ( // Buton stili belirleniyor
                         <View style={{
-                            height: 50,
-                            borderRadius: 6,
-                            borderWidth: 1,
-                            borderColor: isOpened ? '#03244f' : error ? '#ff0000' : '#D9D9D9',
-                            flexDirection: 'row',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            paddingHorizontal: 20,
+                            height: 50, borderRadius: 6, borderWidth: 1, borderColor: isOpened ? '#03244f' : error ? '#ff0000' : '#D9D9D9',
+                            flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20,
                         }}>
-                            <Text style={{
-                                flex: 1,
-                                fontSize: 13,
-                                fontWeight: '500',
-                                color: '#03244f',
-                            }}>
-                                {selectedItem && selectedItem.title}
+                            <Text style={{ flex: 1, fontSize: 13, fontWeight: '500', color: '#03244f', }}>
+                                {selectedItem && selectedItem.title} 
                             </Text>
-                            {yukleniyor ?
+                            {yukleniyor ? // Veriler yükleniyorsa gözükecek icon
                                 <ActivityIndicator color='#03244f' size={20} style={{}} /> :
                                 <Icon name={isOpened ? 'arrow-up' : 'arrow-down'} size={20} color={'#03244f'} />
                             }
-                            {yenileme !== undefined && veri !== yenileme.title && veri && (
+                            {yenileme !== undefined && veri !== yenileme.title && veri && ( // Daha önceden kaydedilen verinin geri yüklenebilmesi işlevi 
                                 <View>
                                     <TouchableOpacity style={{ width: 24 }} onPress={() => {
                                         if (veri !== undefined) {
@@ -124,49 +116,26 @@ const CustomDropdown = ({ data, onSelect, placeholder, yukleniyor, veri, style, 
                                     </TouchableOpacity>
                                 </View>
                             )}
-
                         </View>
                     );
                 }}
                 renderItem={(item, index, isSelected) => {
-                    return (
-                        <View style={{
-                            flexDirection: 'row',
-                            paddingHorizontal: 17,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            paddingVertical: 8,
-                            ...(isSelected && { backgroundColor: '#D2D9DF' })
-                        }}>
-                            <Text style={{
-                                flex: 1,
-                                fontSize: 16,
-                                fontWeight: '500',
-                                color: '#151E26',
-                            }}>{item.title}</Text>
+                    return ( // DropDown açıldığı zaman gözükecek stil.
+                        <View style={{ flexDirection: 'row', paddingHorizontal: 17, justifyContent: 'center', alignItems: 'center', paddingVertical: 8, ...(isSelected && { backgroundColor: '#D2D9DF' }) }}>
+                            <Text style={{ flex: 1, fontSize: 16, fontWeight: '500', color: '#151E26', }}>{item.title}</Text>
                         </View>
                     );
                 }}
                 showsVerticalScrollIndicator={false}
-                dropdownStyle={{
-                    backgroundColor: '#fff',
-                    borderRadius: 8,
-                }}
+                dropdownStyle={{ backgroundColor: '#fff', borderRadius: 8, }}
                 search={props.poliklinikSecimGirisi && true}
                 searchPlaceHolder={props.poliklinikSecimGirisi && 'Poliklinik Ara'}
-                renderSearchInputLeftIcon={(onSearch) => (
-                    <Icon2 name="search" size={20} color={'#03244f'} style={{ marginRight: -7 }} />
-                )}
+                renderSearchInputLeftIcon={(onSearch) => (<Icon2 name="search" size={20} color={'#03244f'} style={{ marginRight: -7 }} />)}
                 searchInputTxtColor='#03244f'
-                searchInputStyle={{
-                    borderRadius: 6,
-                    margin: 1,
-                    padding: 9,
-                    height: 'auto',
-                    width: 'auto'
-                }}
+                searchInputStyle={{ borderRadius: 6, margin: 1, padding: 9, height: 'auto', width: 'auto' }}
 
             />
+            {/* Hata mesajı */}
             <Text style={{ marginTop: 5, fontSize: 14, color: 'red' }}>{error}</Text>
 
         </View>

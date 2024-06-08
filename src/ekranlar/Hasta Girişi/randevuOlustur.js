@@ -1,11 +1,9 @@
-import { View, Text, ScrollView, TouchableOpacity, Button, SectionList, Alert, TurboModuleRegistry } from 'react-native'
+import { View, Text, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import firestore from '@react-native-firebase/firestore'
 import CustomDropdown from '../../kompanentler/customDropDown'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CustomInput from '../../kompanentler/custominput';
-import { FlatList } from 'react-native-gesture-handler';
-
 
 const RandevuOlustur = ({ route }) => {
     const { tc } = route.params;
@@ -25,7 +23,7 @@ const RandevuOlustur = ({ route }) => {
     const [yukleniyorDoktor, setYukleniyorDoktor] = useState(false);
     const [yukleniyorSaat, setYukleniyorSaat] = useState(false);
 
-    useEffect(() => {
+    useEffect(() => { // Sayfa açıldığında poliklinikler listeleniyor.
         const poliklinikGetir = async () => {
             setYukleniyorPol(true);
             setYukleniyorDoktor(true);
@@ -45,10 +43,11 @@ const RandevuOlustur = ({ route }) => {
     }, []);
 
     const doktorGetir = async (secilenPol, index) => {
+        // Poliklinikler listelendikten sonra hangi polikinik seçili ise onun doktorları getiriliyor
         setYukleniyorDoktor(true);
         setYukleniyorSaat(true);
         try {
-            const poladi =await firestore().collection('poliklinikler').where('poliklinikAdı','==',secilenPol.title).get();
+            const poladi = await firestore().collection('poliklinikler').where('poliklinikAdı', '==', secilenPol.title).get();
             const querySnapshot = await firestore()
                 .collection('doktorlar')
                 .where('poliklinik', '==', poladi.docs[0].id)
@@ -58,7 +57,7 @@ const RandevuOlustur = ({ route }) => {
                 doktorTc: doc.id,
                 title: doc.data().ad + ' ' + doc.data().soyad,
             }));
-
+            // Doktorlar değişkenlere aktarılıyor.
             setDoktorlar(doktorList);
             setSecilenPoliklinik(secilenPol.title);
             setSecilenPoliklinikId(poladi.docs[0].id);
@@ -69,15 +68,17 @@ const RandevuOlustur = ({ route }) => {
             setYukleniyorDoktor(false);
         }
     };
+
     useEffect(() => {
         if (secilenPoliklinikId !== '' && secilenDoktor !== '') {
             const currentDate = new Date();
-            const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}.${(currentDate.getMonth() + 1).toString().padStart(2, '0')}.${currentDate.getFullYear()}`;
+            const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}.${(
+                currentDate.getMonth() + 1).toString().padStart(2, '0')}.${currentDate.getFullYear()}`;
             tarihDegisimi({ type: 'initial' }, currentDate);
         }
     }, [secilenPoliklinikId])
 
-    const allTimes = [
+    const allTimes = [ // Randevuların kullanılabilecek tüm saatlari değişkende tutuluyor.
         { title: '08:20 - 08:30' }, { title: '08:30 - 08:40' }, { title: '08:40 - 08:50' }, { title: '08:50 - 09:00' },
         { title: '09:00 - 09:10' }, { title: '09:10 - 09:20' }, { title: '09:30 - 09:40' }, { title: '09:40 - 09:50' },
         { title: '09:50 - 10:00' }, { title: '10:00 - 10:10' }, { title: '10:10 - 10:20' }, { title: '10:20 - 10:30' },
@@ -92,9 +93,11 @@ const RandevuOlustur = ({ route }) => {
     ];
 
     const tarihDegisimi = async (event, selectedDate) => {
+        // Tarih değiştikten sonra otomatik olarak seçilen tarihte boş randevu saatleri listeleniyor.
         setDateGoster(false);
         setDate(selectedDate)
-        const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}.${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`;
+        const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}.${(
+            selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`;
         setSecilenTarih(formattedDate);
         setRandevuSaati('');
         if (event.type !== 'dismissed') {
@@ -105,11 +108,9 @@ const RandevuOlustur = ({ route }) => {
                     where('poliklinikID', '==', secilenPoliklinikId).
                     where('doktorTC', '==', secilenDoktor).get();
                 const appointmentTimes = snapshot.docs.map(doc => ({ title: doc.data().randevuSaati }));
-                const availableTimes = allTimes.filter(time => !appointmentTimes.some(appointmentTime => appointmentTime.title === time.title));
+                const availableTimes = allTimes.filter
+                    (time => !appointmentTimes.some(appointmentTime => appointmentTime.title === time.title));
                 setAktifSaatler(availableTimes);
-                //console.log(availableTimes, secilenDoktor, secilenDoktorAd, secilenTarih, randevuSaati, doktorlar[0]);
-                //console.log("safasf", formattedDate, secilenPoliklinikId, secilenDoktor, "-------", appointmentTimes)
-
             } catch (error) {
                 console.error("Hata:", error);
                 return [];
@@ -120,6 +121,7 @@ const RandevuOlustur = ({ route }) => {
     };
 
     const randevuAl = async () => {
+        // Randevu oluştur butonuna basınca olacak kodlar.
         try {
             const aynıTarihSorgu = await firestore().collection('randevular').
                 where('hastaTC', '==', tc).
@@ -132,13 +134,14 @@ const RandevuOlustur = ({ route }) => {
             }
 
             const querySnapshot = await firestore().collection('randevular').orderBy('id', 'desc').limit(1).get();
+            // En son id alınıyor.
             let sonID = 0;
             if (!querySnapshot.empty) {
                 const sonBelge = querySnapshot.docs[0];
                 sonID = sonBelge.data().id;
             }
 
-            const yeniID = sonID + 1;
+            const yeniID = sonID + 1; // En son id 1 arttırılıyor.
             const randevu = {
                 id: yeniID,
                 hastaTC: tc,
@@ -149,9 +152,9 @@ const RandevuOlustur = ({ route }) => {
                 randevuTarihi: secilenTarih,
                 randevuSaati: randevuSaati,
                 randevuDurumu: 'Randevu Alındı',
-            };
+            }; // Veri tabanına gönderiliyor
             await firestore().collection('randevular').doc(yeniID.toString()).set(randevu);
-            Alert.alert('Durum','Randevunuz oluşturulmuştur.');
+            Alert.alert('Durum', 'Randevunuz oluşturulmuştur.');
         } catch (error) {
             console.error('Error fetching data: ', error);
         }
@@ -160,8 +163,13 @@ const RandevuOlustur = ({ route }) => {
     return (
         <View style={{ flex: 1, marginHorizontal: 20 }}>
             <View style={{ marginTop: 150, marginVertical: 30, rowGap: 10, }}>
-                <CustomDropdown data={poliklinikler} onSelect={(secilenPol) => { doktorGetir(secilenPol); }} placeholder="Poliklinik Seçimi" poliklinikSecimGirisi geciciVeri yukleniyor={yukleniyorPol} />
-                <CustomDropdown data={doktorlar} onSelect={(secilenDokt) => { setSecilenDoktor(secilenDokt.doktorTc); setSecilenDoktorAd(secilenDokt.title); }} placeholder="Doktor Seçimi" doktorSecimi geciciVeri yukleniyor={yukleniyorDoktor} />
+                <CustomDropdown data={poliklinikler} onSelect={(secilenPol) => { doktorGetir(secilenPol); }}
+                    placeholder="Poliklinik Seçimi" poliklinikSecimGirisi geciciVeri yukleniyor={yukleniyorPol} />
+                <CustomDropdown data={doktorlar} onSelect={(secilenDokt) => {
+                    setSecilenDoktor(secilenDokt.doktorTc);
+                    setSecilenDoktorAd(secilenDokt.title);
+                }}
+                    placeholder="Doktor Seçimi" doktorSecimi geciciVeri yukleniyor={yukleniyorDoktor} />
 
                 <TouchableOpacity onPress={() => {
                     if (secilenPoliklinikId === '') {
@@ -177,7 +185,8 @@ const RandevuOlustur = ({ route }) => {
                 </TouchableOpacity>
                 {dateGoster && (<DateTimePicker value={date} mode="date" display="compact" onChange={tarihDegisimi} />)}
 
-                <CustomDropdown data={aktifSaatler} onSelect={(secilenSaat) => { setRandevuSaati(secilenSaat.title); }} placeholder="Randevu Saati" geciciVeri yukleniyor={yukleniyorSaat} />
+                <CustomDropdown data={aktifSaatler} onSelect={(secilenSaat) => { setRandevuSaati(secilenSaat.title); }}
+                    Dplaceholder="Randevu Saati" geciciVeri yukleniyor={yukleniyorSaat} />
                 <TouchableOpacity
                     style={{ paddingVertical: 10, borderRadius: 20, backgroundColor: '#03244f', alignItems: 'center' }}
                     onPress={randevuAl}

@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Button, Alert, SafeAreaView, ScrollView, Platform, Image, Text, Animated, TouchableOpacity } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Alert, SafeAreaView, ScrollView, Image, Text, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import CustomInput from '../kompanentler/custominput';
 import CustomDropdown from '../kompanentler/customDropDown';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Icon2 from 'react-native-vector-icons/SimpleLineIcons'
 import { useFocusEffect } from '@react-navigation/native';
-import DateTimePicker  from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const KayitOl = ({ navigation }) => {
     const [date, setDate] = useState(new Date());
@@ -25,19 +25,12 @@ const KayitOl = ({ navigation }) => {
     const [sifre, setSifre] = useState('');
     const [yukleniyorSehir, setYukleniyorSehir] = useState(false);
 
-    const [kanGrupları,setKanGrupları] = useState([
-        { title: 'AB Rh+' },
-        { title: 'AB Rh-' },
-        { title: 'A Rh+' },
-        { title: 'A Rh-' },
-        { title: 'B Rh+' },
-        { title: 'B Rh-' },
-        { title: '0 Rh+' },
-        { title: '0 Rh-' },
-    ]);
+    const [kanGrupları, setKanGrupları] = useState([
+        { title: 'AB Rh+' }, { title: 'AB Rh-' }, { title: 'A Rh+' }, { title: 'A Rh-' },
+        { title: 'B Rh+' }, { title: 'B Rh-' }, { title: '0 Rh+' }, { title: '0 Rh-' }]);
     const [sehirler, setSehirler] = useState([]);
 
-    useEffect(() => {
+    useEffect(() => { // Ekran açıldığı zaman şehirler veri tabanından değişkene aktarılıyor.
         const fetchData = async () => {
             setYukleniyorSehir(true);
             try {
@@ -56,17 +49,15 @@ const KayitOl = ({ navigation }) => {
 
 
     const handleRegister = async () => {
-        if (cinsiyet === '') {
+        if (cinsiyet === '') { // Kayıt ol tuşuna bastıktan sonra metinlerde hata varmı kontrol edliyor.
             setCinsiyet('girilmedi');
             Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
             return;
         }
         if (email && !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-            // Eğer e-posta doğrulaması yapılmak isteniyorsa ve geçersizse hata göster
             Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
             return;
         } else if (sifre && sifre.length < 1) {
-            // Eğer şifre doğrulaması yapılmak isteniyorsa ve kısa ise hata göster
             Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
             return;
         } else if ((tc || gsm) && tc !== '' && gsm !== '' && !/^\d+$/.test(tc) && !/^\d+$/.test(gsm)) {
@@ -101,11 +92,10 @@ const KayitOl = ({ navigation }) => {
                 .where('SehirAdi', '==', dogumyeri)
                 .get();
 
-
             const sehirId = sehirSnapshot.docs[0].id;
             const kaydet = firestore().collection('hastalar').doc(tc);
             const sorgu = await kaydet.get();
-            if (!sorgu.exists) {
+            if (!sorgu.exists) { // Eğer girilen TC'ye ait başka bir kullanıcı yoksa kayıt işlemi gerçekleşiyor
                 const user = {
                     tc: tc,
                     ad: ad,
@@ -128,9 +118,9 @@ const KayitOl = ({ navigation }) => {
             setYenile(false);
             setCinsiyet('');
             setDogumtarihi('');
-            Alert.alert('Bilgi', 'Veri başarıyla Firestore\'a kaydedildi.', [{ text: 'Tamam' }]);
+            Alert.alert('Bilgi', 'Başarıyla kayıt olundu.', [{ text: 'Tamam' }]);
         } catch (ex) {
-            Alert.alert('Hata', `Firestore'a veri eklenirken bir hata oluştu: ${ex.message}`, [{ text: 'Tamam' }]);
+            Alert.alert('Hata', `Veri eklenirken bir hata oluştu: ${ex.message}`, [{ text: 'Tamam' }]);
         }
     };
 
@@ -139,16 +129,20 @@ const KayitOl = ({ navigation }) => {
             setYenile(false);
         }, [])
     );
-    
+
     const tarihDegisimi = (event, selectedDate) => {
-        setDateGoster(false);
+        setDateGoster(false);           // Seçilen tarih veri tabanına göndeirlmesi için uygun biçime çeviriliyor.
         setDate(selectedDate)
-        const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}.${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`;
+        const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}.${
+            (selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`;
         setDogumtarihi(formattedDate);
     };
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ height: 90, backgroundColor: '#03244f', zIndex: 999, alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, gap: 10, justifyContent: 'space-between' }}>
+            <View style={{
+                height: 90, backgroundColor: '#03244f', zIndex: 999, alignItems: 'center',
+                flexDirection: 'row', paddingHorizontal: 10, gap: 10, justifyContent: 'space-between'
+            }}>
                 <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
                     <Image source={require('../assets/iaü.png')} style={{ width: 60, height: 60 }} />
                     <View style={{}}>
@@ -190,10 +184,12 @@ const KayitOl = ({ navigation }) => {
                         </View>
                         <Text style={{ marginTop: 5, fontSize: 14, color: 'red' }}>{cinsiyet === 'girilmedi' && 'Cinsiyet seçiniz.'}</Text>
                     </View>
-                    <CustomDropdown data={kanGrupları} onSelect={(selectedItem) => { setKangrubu(selectedItem.title); }} placeholder="Kan Grubu" kanGrubuGirisi geciciVeri />
-                    <CustomDropdown data={sehirler} onSelect={(selectedItem) => { setDogumyeri(selectedItem.title); }} placeholder="Doğum Yeri" dogumYeriGirisi geciciVeri yukleniyor={yukleniyorSehir} />
+                    <CustomDropdown data={kanGrupları} onSelect={(selectedItem) => { setKangrubu(selectedItem.title); }}
+                        placeholder="Kan Grubu" kanGrubuGirisi geciciVeri />
+                    <CustomDropdown data={sehirler} onSelect={(selectedItem) => { setDogumyeri(selectedItem.title); }}
+                        placeholder="Doğum Yeri" dogumYeriGirisi geciciVeri yukleniyor={yukleniyorSehir} />
                     <TouchableOpacity onPress={() => { setDateGoster(true) }} >
-                        <CustomInput placeholder="Doğum Tarihi" veri={dogumtarihi} disable={false} yenile={yenile}/>
+                        <CustomInput placeholder="Doğum Tarihi" veri={dogumtarihi} disable={false} yenile={yenile} />
                     </TouchableOpacity>
                     {dateGoster && (<DateTimePicker value={date} mode="date" display="compact" onChange={tarihDegisimi} />)}
                     <CustomInput placeholder="GSM" onChangeText={setGsm} gsmGirisi yenile={yenile} />

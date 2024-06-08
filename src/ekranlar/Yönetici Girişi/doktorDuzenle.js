@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Button, Alert, SafeAreaView, ScrollView, Platform, Image, Text, Animated, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import CustomInput from '../../kompanentler/custominput';
 import CustomDropdown from '../../kompanentler/customDropDown';
@@ -47,7 +47,7 @@ const DoktorGuncelleme = ({ navigation, route }) => {
     const [sehirler, setSehirler] = useState([]);
     const [poliklinikler, setPoliklinikler] = useState([]);
 
-    const poliklinikGetir = async () => {
+    const poliklinikGetir = async () => { // Sayfa açıldığında poliklinikler yükleniyor.
 
         try {
             const snapshot = await firestore().collection('poliklinikler').orderBy('poliklinikAdı').get();
@@ -62,7 +62,7 @@ const DoktorGuncelleme = ({ navigation, route }) => {
 
     };
 
-    const sehirleriGetir = async () => {
+    const sehirleriGetir = async () => { // Sayfa açıldığında şehirler yükleniyor.
         try {
             const snapshot = await firestore().collection('sehirler').orderBy('SehirAdi').get();
             const fetchedData = snapshot.docs.map(doc => ({ title: doc.data().SehirAdi }));
@@ -75,7 +75,7 @@ const DoktorGuncelleme = ({ navigation, route }) => {
         }
     };
 
-    const verileriGetir = async (numarası) => {
+    const verileriGetir = async (numarası) => { // Veriler veri tabanından alınıyor ve değişkenlere aktarılıyor.
         setYenile(false);
         setYukleniyorTc(true);
         setYukleniyorAd(true);
@@ -92,7 +92,7 @@ const DoktorGuncelleme = ({ navigation, route }) => {
             if (veri.exists) {
                 let sehirCevir = await firestore().collection('sehirler').doc(veri.get('dogumyeri')).get();
                 let polCevir = await firestore().collection('poliklinikler').doc(veri.get('poliklinik')).get();
-                setAd1(veri.get('ad'));
+                setAd1(veri.get('ad')); // Alınan veriler metinlerde gözükmesi için bir değişken daha kullanılıyor.
                 setSoyad1(veri.get('soyad'));
                 setCinsiyet1(veri.get('cinsiyet'));
                 setDogumyeri1({ title: sehirCevir.get('SehirAdi') });
@@ -124,14 +124,13 @@ const DoktorGuncelleme = ({ navigation, route }) => {
         }
     }
 
-    const handleRegister = async () => {
-        if (cinsiyet === '') {
+    const doktorDüzenle = async () => { // Düzenleme butonuna basıldığında...
+        if (cinsiyet === '') { // Hata kontrolü yapılıyor.
             setCinsiyet('girilmedi');
             Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
             return;
         }
         if (sifre && sifre.length < 1) {
-            // Eğer şifre doğrulaması yapılmak isteniyorsa ve kısa ise hata göster
             Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
             return;
         } else if ((tc || gsm) && tc !== '' && gsm !== '' && !/^\d+$/.test(tc) && !/^\d+$/.test(gsm)) {
@@ -181,7 +180,7 @@ const DoktorGuncelleme = ({ navigation, route }) => {
                 şifre: sifre
             };
             await kaydet.set(user, { merge: true });
-            setYenile(true);
+            setYenile(true); // Veriler kaydediliyor ve ardından değişkenden temizleniyor.
             setYenile(false);
             setCinsiyet('');
             setDogumtarihi('');
@@ -201,14 +200,14 @@ const DoktorGuncelleme = ({ navigation, route }) => {
         }
     };
 
-    useEffect(() => {
+    useEffect(() => { // TC girilip kutudan çıkınca doktor araması yapılıyor.
         async function verigetirme() {
-            if (hatavar === '' && tcBlur ) {
+            if (hatavar === '' && tcBlur) {
                 try {
                     const veriGetir = await firestore().collection('doktorlar').doc(tc).get();
                     if (veriGetir.exists) {
                         setTcinput(tc);
-                        await verileriGetir(tc);
+                        await verileriGetir(tc); // Doktor verileri tekrar getiriliyor.
                     } else {
                         Alert.alert('Hata', 'Doktor bulunamadı!');
                     }
@@ -223,6 +222,8 @@ const DoktorGuncelleme = ({ navigation, route }) => {
     }, [tcBlur])
 
     useEffect(() => {
+        // Eğer doktorların listelendiği ekrandan kutuyu kaydırıp düzenle 
+        // butonuna basılırsa oradaki TC buraya gönderilip verileri getirme işlemi başlatılır.
         const datagetir = async () => {
             setCinsiyet('');
             setDogumtarihi('');
@@ -257,7 +258,8 @@ const DoktorGuncelleme = ({ navigation, route }) => {
     const tarihDegisimi = (event, selectedDate) => {
         setDateGoster(false);
         setDate(selectedDate)
-        const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}.${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`;
+        const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}.${(
+            selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`;
         setDogumtarihi(formattedDate);
     };
 
@@ -266,7 +268,8 @@ const DoktorGuncelleme = ({ navigation, route }) => {
 
             <ScrollView style={{ marginHorizontal: 20 }} showsVerticalScrollIndicator={false}>
                 <View style={{ justifyContent: 'center', marginVertical: 30, rowGap: 10 }}>
-                    <CustomInput placeholder="TC" onChangeText={setTc} tcGirisi yenile={yenile} veri={tcinput} focusDurum={setTcFocus} blurDurum={setTcBlur} yukleniyor={yukleniyorTc} hatavar={setHataVar} yenileme />
+                    <CustomInput placeholder="TC" onChangeText={setTc} tcGirisi yenile={yenile} veri={tcinput}
+                        focusDurum={setTcFocus} blurDurum={setTcBlur} yukleniyor={yukleniyorTc} hatavar={setHataVar} yenileme />
                     <CustomInput placeholder="Ad" onChangeText={setAd} adGirisi yenile={yenile} veri={ad1} yukleniyor={yukleniyorAd} yenileme />
                     <CustomInput placeholder="Soyad" onChangeText={setSoyad} soyadGirisi yenile={yenile} veri={soyad1} yukleniyor={yukleniyorSoyad} yenileme />
                     <View>
@@ -301,20 +304,24 @@ const DoktorGuncelleme = ({ navigation, route }) => {
                         </View>
                         <Text style={{ marginTop: 5, fontSize: 14, color: 'red' }}>{cinsiyet === 'girilmedi' && 'Cinsiyet seçiniz.'}</Text>
                     </View>
-                    <CustomDropdown data={poliklinikler} onSelect={(secilenPol) => { setPolikinik(secilenPol.title); }} placeholder="Poliklinik Seçimi" poliklinikSecimGirisi veri={poliklinik} yukleniyor={yukleniyorPol} yenileme={poliklinik1} geciciVeri />
-                    <CustomDropdown data={sehirler} onSelect={(selectedItem) => { setDogumyeri(selectedItem.title); }} placeholder="Doğum Yeri" dogumYeriGirisi veri={dogumyeri} yukleniyor={yukleniyorSehir} yenileme={dogumyeri1} geciciVeri />
+                    <CustomDropdown data={poliklinikler} onSelect={(secilenPol) => { setPolikinik(secilenPol.title); }}
+                        placeholder="Poliklinik Seçimi" poliklinikSecimGirisi veri={poliklinik} yukleniyor={yukleniyorPol} yenileme={poliklinik1} geciciVeri />
+                    <CustomDropdown data={sehirler} onSelect={(selectedItem) => { setDogumyeri(selectedItem.title); }}
+                        placeholder="Doğum Yeri" dogumYeriGirisi veri={dogumyeri} yukleniyor={yukleniyorSehir} yenileme={dogumyeri1} geciciVeri />
                     <TouchableOpacity onPress={() => { setDateGoster(true) }} >
-                        <CustomInput placeholder="Doğum Tarihi" onChangeText={setDogumtarihi} veri={dogumtarihi} dgt dogumTarihiYenile={dogumtarihi1} disable={false} yenile={yenile} yukleniyor={yukleniyorDogumTarihi} />
+                        <CustomInput placeholder="Doğum Tarihi" onChangeText={setDogumtarihi} veri={dogumtarihi} dgt
+                            dogumTarihiYenile={dogumtarihi1} disable={false} yenile={yenile} yukleniyor={yukleniyorDogumTarihi} />
                     </TouchableOpacity>
                     {dateGoster && (<DateTimePicker value={date} mode="date" display="compact" onChange={tarihDegisimi} />)}
 
                     <CustomInput placeholder="GSM" onChangeText={setGsm} gsmGirisi yenile={yenile} veri={gsm1} yukleniyor={yukleniyorGsm} yenileme />
-                    <CustomInput placeholder="Şifre" onChangeText={setSifre} secureTextEntry sifreGirisi yenile={yenile} veri={sifre1} yukleniyor={yukleniyorSifre} yenileme />
+                    <CustomInput placeholder="Şifre" onChangeText={setSifre} secureTextEntry sifreGirisi yenile={yenile}
+                        veri={sifre1} yukleniyor={yukleniyorSifre} yenileme />
                     <TouchableOpacity
                         style={{ paddingVertical: 10, borderRadius: 20, backgroundColor: '#03244f', alignItems: 'center', }}
-                        onPress={handleRegister}
+                        onPress={doktorDüzenle}
                     >
-                        <Text style={{ fontSize: 16, color: '#fff', }}>Doktoru Kaydet</Text>
+                        <Text style={{ fontSize: 16, color: '#fff', }}>Doktoru Düzenle</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

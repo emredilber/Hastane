@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, TextInput, Animated, View, Alert, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, Alert, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
 import CustomInput from '../kompanentler/custominput';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useFocusEffect } from '@react-navigation/native';
-
 
 const Giris = ({ navigation }) => {
   const [yenile, setYenile] = useState(false);
@@ -14,7 +13,7 @@ const Giris = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  useEffect(() => {
+  useEffect(() => { // Klavye olayı dinleniyor eğer klavye açılırsa ekranı klavye boyunun yarısı kadar yukarıya kaldırıyor.
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
       setKeyboardHeight(event.endCoordinates.height);
     });
@@ -28,29 +27,29 @@ const Giris = ({ navigation }) => {
     };
   }, [Keyboard]);
 
-  const loginButon = async () => {
+  const loginButon = async () => { // Giriş butonuna basıldığında çalışacak kodlar.
     setYenile(false);
     if (password.length < 1) {
-      // Eğer şifre doğrulaması yapılmak isteniyorsa ve kısa ise hata göster
-      Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }])
-      return
+      // Şifre doğrulaması ile hata gösteriliyor.
+      Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
+      return;
     } if (tc === null || tc === '' || !/^\d+$/.test(tc)) {
-      Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }])
-      return
+      Alert.alert('Hata', "Girilen bilgileri kontrol et!", [{ text: 'Tamam' }]);
+      return;
     }
-    if (kullanıcıTipi === 'hasta') {
+    if (kullanıcıTipi === 'hasta') { // Kullanıcı tipi hasta seçilirse...
       try {
         const dokuman = firestore().collection('hastalar').doc(tc);
         const sorgu = await dokuman.get();
 
-        if (sorgu.exists) {
+        if (sorgu.exists) { // Girilen TC'ye göre veri tabanından çekilen veri varsa...
           const sifresi = sorgu.data().şifre;
-          const ad = sorgu.data().ad;
+          const ad = sorgu.data().ad; // Adı ve şifresi veri tabanından alınıyor.
 
-          if (sifresi === password) {
+          if (sifresi === password) { // Veri tabanındaki şifre girilen şifre ile eşleşiyorsa...
             setPassword('');
             setYenile(true);
-            navigation.navigate('HastaGiris', { tc, ad });
+            navigation.navigate('HastaGiris', { tc, ad }); // HastaGiriş ekran yapısına yönlendiriliyor.
           } else {
             Alert.alert("Hata", "Geçersiz TC veya parola.", [{ text: "Tamam" }]);
           }
@@ -61,19 +60,19 @@ const Giris = ({ navigation }) => {
         Alert.alert("Hata", "Veri alınırken bir hata oluştu: " + ex.message, [{ text: "Tamam" }]);
       }
     }
-    else if (kullanıcıTipi === 'doktor') {
+    else if (kullanıcıTipi === 'doktor') { // Kullanıcı tipi doktor seçilirse...
       try {
         const dokuman = firestore().collection('doktorlar').doc(tc);
         const sorgu = await dokuman.get();
 
-        if (sorgu.exists) {
+        if (sorgu.exists) { // Girilen TC'ye göre veri tabanından çekilen veri varsa...
           const sifresi = sorgu.data().şifre;
-          const ad = sorgu.data().ad;
+          const ad = sorgu.data().ad; // Adı ve şifresi veri tabanından alınıyor.
 
-          if (sifresi === password) {
+          if (sifresi === password) { // Veri tabanındaki şifre girilen şifre ile eşleşiyorsa...
             setPassword('');
             setYenile(true);
-            navigation.navigate('DoktorGiris', { tc, ad });
+            navigation.navigate('DoktorGiris', { tc, ad }); // DoktorGiriş ekran yapısına yönlendiriliyor.
           } else {
             Alert.alert("Hata", "Geçersiz TC veya parola.", [{ text: "Tamam" }]);
           }
@@ -85,19 +84,19 @@ const Giris = ({ navigation }) => {
       }
 
     }
-    else if (kullanıcıTipi === 'yönetici') {
+    else if (kullanıcıTipi === 'yönetici') { // Kullanıcı tipi yönetici seçilirse...
       try {
         const dokuman = firestore().collection('admins').doc(tc);
-        const sorgu = await dokuman.get();
+        const sorgu = await dokuman.get(); // Adı ve şifresi veri tabanından alınıyor.
 
-        if (sorgu.exists) {
+        if (sorgu.exists) { // Girilen TC'ye göre veri tabanından çekilen veri varsa...
           const sifresi = sorgu.data().password;
-          const ad = sorgu.data().ad;
+          const ad = sorgu.data().ad;  // Adı ve şifresi veri tabanından alınıyor.
 
-          if (sifresi === password) {
+          if (sifresi === password) { // Veri tabanındaki şifre girilen şifre ile eşleşiyorsa...
             setPassword('');
             setYenile(true);
-            navigation.navigate('YoneticiGiris', { tc, ad });
+            navigation.navigate('YoneticiGiris', { tc, ad }); // YoneticiGiriş ekran yapısına yönlendiriliyor.
           } else {
             Alert.alert("Hata", "Geçersiz TC veya parola.", [{ text: "Tamam" }]);
           }
@@ -109,32 +108,36 @@ const Giris = ({ navigation }) => {
       }
 
     }
-    else { setError('Birini seç!') }
+    else { setError('Birini seç!') } // Hiçbir kullanıcı tipi seçilmezse hata belirleniyor ve ekranda yazdırılıyor.
   }
+
   useFocusEffect(
     useCallback(() => {
       setYenile(false);
     }, [])
   );
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ height: 40, backgroundColor: '#03244f', zIndex: 999 }} />
 
       <View style={{ marginHorizontal: 20 }}>
-        <View style={{ alignItems: 'center',marginHorizontal:50, marginTop: keyboardHeight ? -keyboardHeight / 2 : 40, gap: 20 }}>
+
+        {/* Bu yapıda başlık elle yapılıyor. */}
+        <View style={{ alignItems: 'center', marginHorizontal: 50, marginTop: keyboardHeight ? -keyboardHeight / 2 : 40, gap: 20 }}>
           <Image source={require('../assets/iaü.png')} style={{ height: 150, width: 150 }} />
           <Text style={{ color: '#03244f', fontWeight: '500', fontSize: 19, textAlign: 'center', lineHeight: 30 }}>İSTANBUL AYDIN ÜNİVERSİTESİ VM MEDİCAL PARK HASTANESİ</Text>
         </View>
-        <View style={{ justifyContent: 'center', marginTop: 80 }}>
 
+        <View style={{ justifyContent: 'center', marginTop: 80 }}>
           <View>
-            <CustomInput
+            <CustomInput // Komponent çağırılıyor ve değişkenler giriliyor.
               containerStyle={{}}
               placeholder={'Tc'}
               onChangeText={setTc}
               tcGirisi
             />
-            <CustomInput
+            <CustomInput // Komponent çağırılıyor ve değişkenler giriliyor.
               containerStyle={{ marginTop: 10 }}
               placeholder={'Şifre'}
               onChangeText={setPassword}
@@ -163,6 +166,7 @@ const Giris = ({ navigation }) => {
                 <Text style={{ marginTop: 30, fontSize: 14, color: 'red', position: 'absolute' }}>{error}</Text>
               </View>
 
+              {/* Şifremi unuttum yazısına basıldığı taktirde ilgili ekranına yönlendiriliyor. */}
               <TouchableWithoutFeedback onPress={() => navigation.navigate('SifremiUnuttum')}>
                 <Text style={{ textDecorationLine: 'underline', color: '#03244f', fontSize: 13.5, }}>Şifremi Unuttum?</Text>
               </TouchableWithoutFeedback>
@@ -170,13 +174,13 @@ const Giris = ({ navigation }) => {
             <View style={{ flexDirection: 'row', marginTop: 80, justifyContent: 'space-between' }}>
               <TouchableOpacity
                 style={{ paddingVertical: 10, borderRadius: 20, backgroundColor: '#03244f', alignItems: 'center', width: 182 }}
-                onPress={loginButon}
+                onPress={loginButon} // Giriş butonuna basılınca çağırılacak kod.
               >
                 <Text style={{ fontSize: 16, color: '#fff', }}>Giriş</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{ paddingVertical: 10, borderRadius: 20, borderWidth: 1, borderColor: '#03244f', backgroundColor: '#fff', alignItems: 'center', width: 182 }}
-                onPress={() => navigation.navigate('KayitOl')}
+                onPress={() => navigation.navigate('KayitOl')} // Kayıt ol tuşuna basınca gelecek ekran.
               >
                 <Text style={{ fontSize: 16, color: '#03244f', }}>Kayıt Ol</Text>
               </TouchableOpacity>

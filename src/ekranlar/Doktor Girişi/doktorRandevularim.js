@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, FlatList, BackHandler, Alert, Image, TouchableOpacity, Button, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore'
 import { useFocusEffect } from '@react-navigation/native';
 import CustomInput from '../../kompanentler/custominput';
@@ -20,7 +20,7 @@ const DoktorRandevularim = ({ route }) => {
 
     const randevularıGetir = async () => {
         try {
-            const querySnapshot = await firestore()
+            const querySnapshot = await firestore() // Doktorun randevuları veri tabanından getiriliyor
                 .collection('randevular')
                 .orderBy('id')
                 .where('doktorTC', '==', tc)
@@ -56,20 +56,19 @@ const DoktorRandevularim = ({ route }) => {
         }, [])
     );
 
-
+    // Randevuları filtrelemek için tarih yapısı kullanılıyor.
     const tarihDegisimi = (event, selectedDate) => {
         setDateGoster(false);
         setDate(selectedDate)
-        const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}.${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`;
-        setSecilenTarih(formattedDate);
+        const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}.${(
+            selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`;
+        setSecilenTarih(formattedDate); // String değere dönüştürülüp değişkene atanıyor.
     }
 
     useEffect(() => {
-        if (filtrele) {
-
+        if (filtrele) { // Filtre true ise seçilen tarih değişkende filtreleniyor ve filtrelenmiş değişkene aktarılıyor.
             const filteredList = randevular.filter(randevu => randevu.randevuTarihi === secilenTarih);
             setFilteredRandevular(filteredList);
-
         } else {
             setFilteredRandevular(randevular);
         }
@@ -78,12 +77,12 @@ const DoktorRandevularim = ({ route }) => {
     const tarihFiltrele = () => {
         setFiltrele(!filtrele);
     }
-    
+
     if (loading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#03244f" />
-                <Text style={{color:'#03244f'}}>Veriler yükleniyor...</Text>
+                <Text style={{ color: '#03244f' }}>Veriler yükleniyor...</Text>
             </View>
         );
     }
@@ -117,7 +116,7 @@ const DoktorRandevularim = ({ route }) => {
                 showsVerticalScrollIndicator={false}
                 data={filteredRandevular}
                 keyExtractor={(item) => item.id}
-                contentContainerStyle={{gap:10}}
+                contentContainerStyle={{ gap: 10 }}
                 renderItem={({ item }) => {
                     return (
                         <View style={{ borderColor: '#D9D9D9', borderWidth: 1.2, borderRadius: 12, }}>

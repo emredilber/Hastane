@@ -1,7 +1,6 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, BackHandler, Alert, Image, TouchableOpacity, Button, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
 import Doktorlar from './doktorlar'
 import sayfaBasligi from '../../kompanentler/sayfaBasligi'
 import KayanMenuStili from '../../kompanentler/kayanMenuStil'
@@ -12,11 +11,12 @@ import HastaGuncelleme from './hastaDuzenle';
 
 const Drawer = createDrawerNavigator();
 
-const YoneticiGiris = ({ route, navigation }) => {
+const YoneticiGiris = ({ route, navigation }) => { // Ekran yapısı çalıştırılıyor.
     const { tc, ad } = route.params;
 
     return (
-        <NavigationContainer independent={true}>
+        // Ekranların gözükeceği yapı ve ekranların bileşenler tasarlanıyor.
+        <NavigationContainer independent={true} /* Diğer ekran yapısı ile bağımsız olması sağlanıyor*/ >
             <Drawer.Navigator
                 initialRouteName='Doktorlar'
                 drawerContent={(props) => <KayanMenuStili navigation1={navigation}{...props} tc={tc} ad={ad} />}
